@@ -6,7 +6,7 @@ from customers.models import CustomerProfile
 
 
 class Categories(models.Model):
-    parent = models.ForeignKey('self', on_delete=models.CASCADE, null=True, blank=True)
+    parent = models.ForeignKey('self', on_delete=models.CASCADE, related_name="subcates", null=True, blank=True)
     name = models.CharField(max_length=30, null=True, blank=True)
 
     def __str__(self):
@@ -14,6 +14,19 @@ class Categories(models.Model):
 
     class Meta:
         verbose_name_plural = 'Categories'
+
+    # @property
+    # def articles(self):
+    #     return self.product_set.all()
+
+    def children(self):  # subcategories
+        return Categories.objects.filter(parent=self)
+
+    @property
+    def is_parent(self):
+        if self.parent is not None:
+            return False
+        return True
 
 
 class Tag(models.Model):
@@ -104,10 +117,14 @@ class Product(models.Model):
     def __str__(self):
         return self.name
 
+    @property
+    def images(self):
+        return self.images_set.all()
+
 
 class Images(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE, null=True)
-    image = models.ImageField(upload_to="assets/", blank=True, null=True)
+    image = models.FileField(upload_to="assets/", blank=True, null=True)
 
     class Meta:
         verbose_name_plural = "Images"

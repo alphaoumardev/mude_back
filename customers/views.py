@@ -96,23 +96,23 @@ class UserAPI(generics.RetrieveAPIView):
 
 @permission_classes([IsAuthenticated])
 @api_view(['POST', 'PATCH', 'GET'])
-def customer_profile(request):
+def get_customer_profile(request):
     """
     :param request:
     :return:
     """
+    if request.method == "GET":
+        user = request.user
+        profile = CustomerProfile.objects.get(user_id=user.id)
+        serializer = CustomerProfileSerializer(profile, many=False)
+        return Response(serializer.data)
+
     if request.method == "POST":
         serializer = CustomerProfileSerializer(data=request.data, many=False)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)
         return Response(serializer.errors)
-
-    if request.method == "GET":
-        user = request.user
-        profile = CustomerProfile.objects.filter(user=user)
-        serializer = CustomerProfileSerializer(profile, many=True)
-        return Response(serializer.data)
 
     if request.method == "PATCH":
         user = request.user.id

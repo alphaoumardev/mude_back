@@ -1,4 +1,4 @@
-from .views import RegisterAPI, UserAPI, ChangePasswordView, customer_profile
+from .views import RegisterAPI, UserAPI, ChangePasswordView, get_customer_profile
 from knox import views as knox_views
 from .views import LoginAPI
 from django.urls import path
@@ -11,7 +11,7 @@ urlpatterns = [
     path('change-password/', ChangePasswordView.as_view(), name='change-password'),
 
     path('loaduser/', UserAPI.as_view(), name="user"),
-    path('customer-profile/', customer_profile, name="user"),
+    path('customer-profile/', get_customer_profile, name="user"),
 ]
 
 # urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

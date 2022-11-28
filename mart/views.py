@@ -11,6 +11,35 @@ from orders.serializers import ReviewSerializer
 from mart.serializers import *
 
 
+@api_view(["GET"])
+@permission_classes([AllowAny])
+def get_all_categories(request):
+    if request.method == "GET":
+        categories = Categories.objects.filter(parent=None).prefetch_related('product_set').all()
+        serializer = CategoriesSerializer(categories, many=True)
+        return Response(serializer.data)
+
+
+@api_view(["GET", "POST"])
+@permission_classes([AllowAny])
+def get_product_by_parent(request, parent=None,):
+    if request.method == "GET":
+        category = Categories.objects.filter(parent__name=parent).first()
+        items = Product.objects.filter(category=category)
+        serializer = ProductSerializer(items, many=True)
+        return Response(serializer.data)
+
+
+@api_view(["GET", "POST"])
+@permission_classes([AllowAny])
+def get_product_by_category(request, parent=None, name=None):
+    if request.method == "GET":
+        category = Categories.objects.filter(parent__name=parent).filter(name=name).first()
+        items = Product.objects.filter(category=category)
+        serializer = ProductSerializer(items, many=True)
+        return Response(serializer.data)
+
+
 class MyPageNumberPagination(PageNumberPagination):
     page_size = 8  # default page size
     page_size_query_param = 'size'  # ?page=xx&size=??
@@ -55,24 +84,6 @@ def get_products(request):
         return Response(seriliazer.errors)
 
 
-@api_view(['GET', 'POST'])
-@permission_classes([AllowAny])
-def get_product(request):
-    if request.method == 'GET':
-        products = Product.objects.all().order_by("id")
-        pag = Paginator(object_list=products, per_page=8)
-        pages = request.GET.get('page')
-        result = pag.get_page(pages)
-        serializer = ProductSerializer(result, many=True)
-        return Response(serializer.data, )
-    if request.method == 'POST':
-        seriliazer = ProductSerializer(data=request.data)
-        if seriliazer.is_valid():
-            seriliazer.save()
-            return Response(seriliazer.data)
-        return Response(seriliazer.errors, )
-
-
 @api_view(['GET', 'PUT', 'DELETE'])
 @permission_classes([AllowAny])
 def get_one_product(request, pk):
@@ -103,25 +114,6 @@ def get_pro_by_category(request, pk):
         category = Categories.objects.get(id=pk)
         variant = Product.objects.filter(category=category).order_by('-id')
         serializer = ProductSerializer(variant, many=True)
-        return Response(serializer.data)
-
-
-@api_view(["GET"])
-@permission_classes([AllowAny])
-def get_category_by_name(request, query=None):
-    if request.method == "GET":
-        category = Categories.objects.filter(genre__genre_name=query)
-        serializer = CategoriesSerializer(category, many=True)
-        return Response(serializer.data)
-
-
-@api_view(["GET", "POST"])
-@permission_classes([AllowAny])
-def get_product_by_category(request, query=None, name=None):
-    if request.method == "GET":
-        genre = Categories.objects.filter(genre__genre_name=query).filter(type__type_name=name)
-        items = Product.objects.filter(category__genre__category__in=genre).filter(category__type__category__in=genre)
-        serializer = ProductSerializer(items, many=True)
         return Response(serializer.data)
 
 
