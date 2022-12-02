@@ -1,11 +1,11 @@
-# Create your views here.
-from django.core.paginator import Paginator
 from django.db.models import Q
-from rest_framework import viewsets
+from django.http import Http404
+from rest_framework import viewsets, status
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
+from rest_framework.views import APIView
 
 from orders.serializers import ReviewSerializer
 from mart.serializers import *
@@ -22,7 +22,7 @@ def get_all_categories(request):
 
 @api_view(["GET", "POST"])
 @permission_classes([AllowAny])
-def get_product_by_parent(request, parent=None,):
+def get_product_by_parent(request, parent=None, ):
     if request.method == "GET":
         category = Categories.objects.filter(parent__name=parent).first()
         items = Product.objects.filter(category=category)
@@ -41,7 +41,7 @@ def get_product_by_category(request, parent=None, name=None):
 
 
 class MyPageNumberPagination(PageNumberPagination):
-    page_size = 8  # default page size
+    page_size = 10  # default page size
     page_size_query_param = 'size'  # ?page=xx&size=??
 
     def get_paginated_response(self, data):
@@ -57,10 +57,67 @@ class MyPageNumberPagination(PageNumberPagination):
 
 
 class ArticleViewSet(viewsets.ModelViewSet):
-    queryset = Product.objects.all().order_by("id")
+    queryset = Product.objects.all()
     serializer_class = ProductSerializer
     pagination_class = MyPageNumberPagination
     permission_classes = [AllowAny]
+
+
+class SingleProduct(APIView):
+    lookup_field = "pk"
+    serializer_class = ProductSerializer
+    permission_classes = [AllowAny]
+
+    def get_object(self, pk):
+        try:
+            return Product.objects.get(id=pk)
+        except Product.DoesNotExist:
+            raise Http404
+
+    def get(self, request, pk, format=None):
+        article = self.get_object(pk)
+        serializer = ProductSerializer(article)
+        return Response(serializer.data)
+
+
+@api_view(["GET", ])
+@permission_classes([AllowAny])
+def get_variations_filter(request):
+    """To get the variations to filter products"""
+    if request.method == "GET":
+        try:
+            colors = ColorsOption.objects.all()
+            color_serializer = ColorsOptionSerializer(colors, many=True)
+
+            tags = Tag.objects.all()
+            tag_serializer = TagSerializer(tags, many=True)
+
+            sizes = SizesOption.objects.all()
+            size_serializer = SizeSerialiser(sizes, many=True)
+
+            materials = Materials.objects.all()
+            mate_serializer = MaterialSerializer(materials, many=True)
+
+            occasions = Occasion.objects.all()
+            occ_serializer = OccasionSerializer(occasions, many=True)
+
+            brands = Brands.objects.all()
+            brand_serializer = BrandSerializer(brands, many=True)
+
+            lengths = Lengths.objects.all()
+            length_serializer = LengthSerializer(lengths, many=True)
+
+            return Response({
+                "colors": color_serializer.data,
+                "tags": tag_serializer.data,
+                "sizes": size_serializer.data,
+                "materials": mate_serializer.data,
+                "occasions": occ_serializer.data,
+                "brands": brand_serializer.data,
+                "lengths": length_serializer.data
+            })
+        except Exception as e:
+            return Response({"message": f'{e}'}, status=status.HTTP_204_NO_CONTENT)
 
 
 # Here are just for the products
@@ -70,10 +127,7 @@ def get_products(request):
     if request.method == 'GET':
         # the product search
         query = request.GET.get('query') if request.GET.get('query') is not None else ''
-        products = Product.objects.filter(
-            Q(category__product__name__contains=query) |
-            Q(category__product__name__exact=query)
-        )
+        products = Product.objects.all()
         serializer = ProductSerializer(products, many=True)
         return Response(serializer.data)
     if request.method == 'POST':

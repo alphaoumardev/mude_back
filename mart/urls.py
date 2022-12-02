@@ -8,6 +8,8 @@ urlpatterns = [
     path('catenames/<str:parent>/', get_product_by_parent, name='parentd'),
     path('catenames/<str:parent>/<str:name>/', get_product_by_category, name='pro'),
 
+    path('products-filters/', get_variations_filter, name="products-filters"),
+
     path('products-by-page/', ArticleViewSet.as_view({"get": "list"}), name='product'),
     path('all-products/', get_products, name='product'),
 
