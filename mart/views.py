@@ -15,16 +15,16 @@ from mart.serializers import *
 @permission_classes([AllowAny])
 def get_all_categories(request):
     if request.method == "GET":
-        categories = Categories.objects.filter(parent=None).prefetch_related('product_set').all()
+        categories = Categories.objects.filter(parent=None)
         serializer = CategoriesSerializer(categories, many=True)
         return Response(serializer.data)
 
 
 @api_view(["GET", "POST"])
 @permission_classes([AllowAny])
-def get_product_by_parent(request, parent=None, ):
+def get_product_by_parent(request, name=None, ):
     if request.method == "GET":
-        category = Categories.objects.filter(parent__name=parent).first()
+        category = Categories.objects.filter(parent__name=name).prefetch_related('product_set').first()
         items = Product.objects.filter(category=category)
         serializer = ProductSerializer(items, many=True)
         return Response(serializer.data)
@@ -32,16 +32,16 @@ def get_product_by_parent(request, parent=None, ):
 
 @api_view(["GET", "POST"])
 @permission_classes([AllowAny])
-def get_product_by_category(request, parent=None, name=None):
+def get_product_by_category(request, parent=None, name=None, subcate=None):
     if request.method == "GET":
-        category = Categories.objects.filter(parent__name=parent).filter(name=name).first()
+        category = Categories.objects.filter(parent__name=parent).filter(name=name).filter(subcates__name=subcate).first()
         items = Product.objects.filter(category=category)
         serializer = ProductSerializer(items, many=True)
         return Response(serializer.data)
 
 
 class MyPageNumberPagination(PageNumberPagination):
-    page_size = 10  # default page size
+    page_size = 8  # default page size
     page_size_query_param = 'size'  # ?page=xx&size=??
 
     def get_paginated_response(self, data):
@@ -68,13 +68,14 @@ class SingleProduct(APIView):
     serializer_class = ProductSerializer
     permission_classes = [AllowAny]
 
-    def get_object(self, pk):
+    @staticmethod
+    def get_object(pk):
         try:
             return Product.objects.get(id=pk)
         except Product.DoesNotExist:
             raise Http404
 
-    def get(self, request, pk, format=None):
+    def get(self, request, pk, ):
         article = self.get_object(pk)
         serializer = ProductSerializer(article)
         return Response(serializer.data)
@@ -127,8 +128,8 @@ def get_products(request):
     if request.method == 'GET':
         # the product search
         query = request.GET.get('query') if request.GET.get('query') is not None else ''
-        products = Product.objects.all()
-        serializer = ProductSerializer(products, many=True)
+        # products = Product.objects.all()
+        serializer = ProductSerializer(query, many=True)
         return Response(serializer.data)
     if request.method == 'POST':
         seriliazer = ProductSerializer(data=request.data)

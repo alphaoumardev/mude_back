@@ -93,7 +93,7 @@ class Occasion(models.Model):
 class Product(models.Model):
     SALES = (("Sale", "Sale"), ("New", "New"), ("Regular", "Regular"))
 
-    category = models.ForeignKey(Categories, on_delete=models.CASCADE)
+    category = models.ForeignKey(Categories, on_delete=models.CASCADE, related_name="subarticles")
     name = models.CharField(max_length=50, null=False)
     sku = models.BigIntegerField(blank=True, null=True)
     description = models.TextField(blank=False)

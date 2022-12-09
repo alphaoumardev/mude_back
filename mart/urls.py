@@ -4,9 +4,9 @@ from .views import *
 
 
 urlpatterns = [
-    path('catename/', get_all_categories, name='details'),
-    path('catenames/<str:parent>/', get_product_by_parent, name='parentd'),
-    path('catenames/<str:parent>/<str:name>/', get_product_by_category, name='pro'),
+    path('catenames/', get_all_categories, name='details'),
+    path('catenames/<str:name>/', get_product_by_parent, name='parentd'),
+    path('catenames/<str:parent>/<str:name>/<str:subcate>/', get_product_by_category, name='pro'),
 
     path('products-filters/', get_variations_filter, name="products-filters"),
 

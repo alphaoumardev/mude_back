@@ -4,10 +4,14 @@ from mart.models import Categories, Tag, Materials, Product, ColorsOption, Lengt
     Brands, Occasion
 
 
+class ArticleSerializer(serializers.ModelSerializer):
+    model = Product
+    fields = '__all__'
+
+
 class CategoriesSerializer(serializers.ModelSerializer):
     subcates_count = serializers.SerializerMethodField()
-
-    # articles = serializers.SerializerMethodField()
+    # subarticles = ArticleSerializer(many=True,read_only=True)
 
     class Meta:
         model = Categories
@@ -16,8 +20,8 @@ class CategoriesSerializer(serializers.ModelSerializer):
 
     # @staticmethod
     # def get_articles(obj):
-    #     pro = Categories.objects.prefetch_related('product_set').all()
-    #     return CategoriesSerializer(pro, many=True).data
+    #     pro = Product.objects.select_related("category")
+    #     return ProductSerializer(pro, many=True).data
 
     def get_fields(self):
         fields = super(CategoriesSerializer, self).get_fields()
@@ -83,8 +87,9 @@ class ProductSerializer(serializers.ModelSerializer):
     class Meta:
         model = Product
         fields = '__all__'
+        depth = 1
 
-    category = CategoriesSerializer(many=False, read_only=True)
+    category = CategoriesSerializer(many=False, read_only=True,)# source='category_set'
     tag = TagSerializer(read_only=True, many=True, required=False)
     brand = BrandSerializer(read_only=True, required=False, many=False)
     images = ImageSerializer(read_only=True, many=True)
