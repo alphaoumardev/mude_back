@@ -48,12 +48,11 @@ class ChangePasswordSerializer(serializers.Serializer, ):
 
 class CustomerProfileSerializer(serializers.ModelSerializer):
     user = UserSerializer(required=False, read_only=True)
-    my_posts_count = serializers.ReadOnlyField(read_only=True, required=False)
 
     class Meta:
         model = CustomerProfile
         fields = '__all__'
-        depth = 1
+        # depth = 1
 
 
 class CustomerProfilePostSerializer(serializers.ModelSerializer):

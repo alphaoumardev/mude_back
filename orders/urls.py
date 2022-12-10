@@ -2,12 +2,13 @@ from django.urls import path
 from .views import *
 
 urlpatterns = [
-    # The orders
-    path('cart/', create_cart, name='cart'),
 
+    path('cart/', create_cart, name='cart'),
     path('cart/<str:pk>', CartItemView.as_view(), name='cart_items'),
+
     path('wishlist/', create_wishlist, name='wishlist'),
     path('wishlist/<str:pk>', operate_wishlist, name='wishlist'),
+
     path('address/', create_address,  name='address'),
     path('orders/', create_order, name='orders'),
     path('orderitem/<str:pk>', create_order_item, name='orderItem'),

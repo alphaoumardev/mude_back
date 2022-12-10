@@ -1,4 +1,4 @@
-from customers.serializers import UserSerializer
+from customers.serializers import CustomerProfileSerializer
 from mart.models import Reviews
 from mart.serializers import ProductSerializer
 from rest_framework import serializers
@@ -12,12 +12,14 @@ class ShippingAddressSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
+
 class ShippingAddressReadSerializer(serializers.ModelSerializer):
-    user = UserSerializer(read_only=True)
+    cutomer = CustomerProfileSerializer(read_only=True)
 
     class Meta:
         model = ShippingAddress
         fields = '__all__'
+        depth = 1
 
 
 class WishlistSerializer(serializers.ModelSerializer):
@@ -27,12 +29,13 @@ class WishlistSerializer(serializers.ModelSerializer):
 
 
 class WishlistReadSerializer(serializers.ModelSerializer):
-    product = ProductSerializer(required=False, read_only=True)
-    user = UserSerializer(required=False, read_only=True)
+    # product = ProductSerializer(required=False, read_only=True)
+    # customer = CustomerProfileSerializer(required=False, read_only=True)
 
     class Meta:
         model = Wishlist
         fields = '__all__'
+        depth = 1
 
 
 class CouponSerializer(serializers.ModelSerializer):
@@ -45,15 +48,17 @@ class CartItemSerializer(serializers.ModelSerializer):
     class Meta:
         model = CartItem
         fields = '__all__'
+        # depth = 1
 
 
 class CartItemReadSerializer(serializers.ModelSerializer):
     product = ProductSerializer(read_only=True,)
-    user = UserSerializer(read_only=True,)
+    # customer = CustomerProfileSerializer(read_only=True,)
 
     class Meta:
         model = CartItem
         fields = '__all__'
+        depth = 1
 
 
 class CartItemUpdateSerializer(serializers.ModelSerializer):
@@ -69,12 +74,12 @@ class OrderItemSerializer(serializers.ModelSerializer):
 
 
 class OrderItemReadSerializer(serializers.ModelSerializer):
-    product = ProductSerializer(many=True, read_only=True)
+    # product = ProductSerializer(many=True, read_only=True)
 
     class Meta:
         model = OrderItem
         fields = '__all__'
-
+        depth = 1
 
 class OrderSerializer(serializers.ModelSerializer):
     class Meta:
@@ -83,13 +88,14 @@ class OrderSerializer(serializers.ModelSerializer):
 
 
 class OrderReadSerializer(serializers.ModelSerializer):
-    user = UserSerializer(required=False, read_only=True)
-    address = ShippingAddressReadSerializer(required=False, read_only=True)
-    cart = CartItemReadSerializer(many=True, read_only=True)
+    # customer = CustomerProfileSerializer(required=False, read_only=True)
+    # address = ShippingAddressReadSerializer(required=False, read_only=True)
+    # cart = CartItemReadSerializer(many=True, read_only=True)
 
     class Meta:
         model = Order
         fields = '__all__'
+        depth = 1
 
 
 class PaymentDetailsSerializer(serializers.ModelSerializer):

@@ -102,8 +102,7 @@ def get_customer_profile(request):
     :return:
     """
     if request.method == "GET":
-        user = request.user
-        profile = CustomerProfile.objects.get(user_id=user.id)
+        profile = CustomerProfile.objects.get(user_id=request.user.id)
         serializer = CustomerProfileSerializer(profile, many=False)
         return Response(serializer.data)
 

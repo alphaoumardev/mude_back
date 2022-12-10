@@ -11,7 +11,7 @@ class ArticleSerializer(serializers.ModelSerializer):
 
 class CategoriesSerializer(serializers.ModelSerializer):
     subcates_count = serializers.SerializerMethodField()
-    # subarticles = ArticleSerializer(many=True,read_only=True)
+    # articles = ArticleSerializer(many=True,read_only=True, source="Product_set")
 
     class Meta:
         model = Categories
@@ -88,16 +88,17 @@ class ProductSerializer(serializers.ModelSerializer):
         model = Product
         fields = '__all__'
         depth = 1
-
-    category = CategoriesSerializer(many=False, read_only=True,)# source='category_set'
-    tag = TagSerializer(read_only=True, many=True, required=False)
-    brand = BrandSerializer(read_only=True, required=False, many=False)
+    """Remember when the model does not have the field to add it here"""
     images = ImageSerializer(read_only=True, many=True)
-    color = ColorsOptionSerializer(read_only=True, required=False, many=True)
-    size = SizeSerialiser(read_only=True, required=False, many=True)
-    lengths = LengthSerializer(read_only=True, required=False, many=True)
-    materials = MaterialSerializer(read_only=True, required=False, many=True)
-    occasion = OccasionSerializer(read_only=True, required=False, many=True)
+
+    # category = CategoriesSerializer(many=False, read_only=True,)# source='category_set'
+    # tag = TagSerializer(read_only=True, many=True, required=False)
+    # brand = BrandSerializer(read_only=True, required=False, many=False)
+    # color = ColorsOptionSerializer(read_only=True, required=False, many=True)
+    # size = SizeSerialiser(read_only=True, required=False, many=True)
+    # lengths = LengthSerializer(read_only=True, required=False, many=True)
+    # materials = MaterialSerializer(read_only=True, required=False, many=True)
+    # occasion = OccasionSerializer(read_only=True, required=False, many=True)
 
     # @staticmethod
     # def get_images(obj):

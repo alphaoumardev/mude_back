@@ -24,7 +24,7 @@ def get_all_categories(request):
 @permission_classes([AllowAny])
 def get_product_by_parent(request, name=None, ):
     if request.method == "GET":
-        category = Categories.objects.filter(parent__name=name).prefetch_related('product_set').first()
+        category = Categories.objects.filter(parent__name=name).first()
         items = Product.objects.filter(category=category)
         serializer = ProductSerializer(items, many=True)
         return Response(serializer.data)
