@@ -41,16 +41,16 @@ class CartItem(models.Model):
     size = models.CharField(max_length=20, null=True)
     paid = models.BooleanField(default=False)
 
-    # def __str__(self):
-    #     return self.product.name
+    def __str__(self):
+        return self.product.name
 
 
 class OrderItem(models.Model):
     product = models.ManyToManyField(Product, blank=True)
     total = models.DecimalField(decimal_places=2, max_digits=6, null=True, )
     quantity = models.IntegerField(default=1)
-    color = models.CharField(max_length=20, null=True)
-    size = models.CharField(max_length=20, null=True)
+    color = models.CharField(max_length=20, null=True, blank=True)
+    size = models.CharField(max_length=20, null=True, blank=True)
 
     # def __str__(self):
     #     return self.product.name
@@ -69,7 +69,6 @@ class Order(models.Model):
     customer = models.ForeignKey(CustomerProfile, on_delete=models.CASCADE)
     order_reference = models.BigIntegerField(blank=True, null=True, unique=True)
     amount = models.DecimalField(max_digits=6, decimal_places=2, null=True)
-
 
     address = models.ForeignKey(ShippingAddress, on_delete=models.CASCADE, null=True)
     cart = models.ManyToManyField(CartItem, blank=True)

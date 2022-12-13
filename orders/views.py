@@ -298,7 +298,7 @@ def create_order(request, ):
 
     try:
         if request.method == 'GET':
-            orders = Order.objects.filter(customer=current_customer)
+            orders = Order.objects.filter(customer=current_customer).order_by('paid_at').reverse()
             serializer = OrderReadSerializer(orders, many=True)
             return Response(serializer.data)
     except Exception as e:

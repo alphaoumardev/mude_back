@@ -88,14 +88,14 @@ class OrderSerializer(serializers.ModelSerializer):
 
 
 class OrderReadSerializer(serializers.ModelSerializer):
-    # customer = CustomerProfileSerializer(required=False, read_only=True)
-    # address = ShippingAddressReadSerializer(required=False, read_only=True)
-    # cart = CartItemReadSerializer(many=True, read_only=True)
+    customer = CustomerProfileSerializer(required=False, read_only=True)
+    address = ShippingAddressReadSerializer(required=False, read_only=True)
+    cart = CartItemReadSerializer(many=True, read_only=True)
 
     class Meta:
         model = Order
         fields = '__all__'
-        depth = 1
+        # depth = 4
 
 
 class PaymentDetailsSerializer(serializers.ModelSerializer):

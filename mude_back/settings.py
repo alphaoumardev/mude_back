@@ -1,12 +1,23 @@
 import os
 from datetime import timedelta
 from pathlib import Path
+import environ
+
+env = environ.Env()
+# reading .env file
+environ.Env.read_env()
+
 
 from rest_framework.settings import api_settings
+import openai
+
+# Load your API key from an environment variable or secret management service
+# openai.api_key = os.getenv("OPENAI_API_KEY")
+# response = openai.Completion.create(model="text-davinci-003", prompt="Say this is a test", temperature=0, max_tokens=7)
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-x)kxzsaofpfb#!p)q8v1w#4smanv5z1zevs(3c^7w0o(u#30fo'
+SECRET_KEY = env("SECRET_KEY")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 ALLOWED_HOSTS = []
