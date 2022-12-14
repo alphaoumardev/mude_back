@@ -144,10 +144,10 @@ def get_products(request):
 def get_one_product(request, pk):
     if request.method == "GET":
         article = Product.objects.get(id=pk)
-        reveiws = Reviews.objects.filter(product=article)
+        reveiws = Reviews.objects.filter(product=article).order_by('reviewed_at').reverse()
         count = reveiws.count()
         seriliazer = ProductSerializer(article, many=False)
-        rev = ReviewSerializer(reveiws, many=True)
+        rev = ReviewReadSerializer(reveiws, many=True)
         return Response({"pro": seriliazer.data, "rev": rev.data, "count": count})
 
     if request.method == 'PUT':
@@ -262,19 +262,4 @@ def filter_by_price(request):
         products = Product.objects.filter(price__gte=less_price,
                                           price__lte=greater_price)
         serializer = ProductSerializer(products, many=True)
-        return Response(serializer.data)
-
-
-@api_view(['GET', 'POST'])
-@permission_classes([IsAuthenticated])
-def review_products(request):
-    if request.method == "POST":
-        serializer = ReviewSerializer(data=request.data, many=False)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data)
-        return Response(serializer.errors)
-    if request.method == "GET":
-        reviews = Reviews.objects.all()
-        serializer = ReviewSerializer(reviews, many=True)
         return Response(serializer.data)

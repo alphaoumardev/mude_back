@@ -1,4 +1,5 @@
 from django.urls import path
+
 from .views import *
 
 urlpatterns = [
@@ -15,6 +16,9 @@ urlpatterns = [
 
     path('orders/', get_orders, name='get_orders'),
     path('orders/myorder/', get_my_orders, name='get_my_orders'),
+
+    path('post-review/', post_review_product, name="reviews"),
+
 
     path('orders/<str:pk>/', get_order_by_id, name='get_order_by_id'),
     path('orders/<str:pk>/deliver/', update_order_to_delivered, name='update_order_to_delivered'),

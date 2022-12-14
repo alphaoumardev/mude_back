@@ -146,7 +146,7 @@ class Reviews(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE, null=True)
     comment = models.TextField(max_length=400, blank=True, null=True)
     rate = models.IntegerField(default=1)
-    reviwed_at = models.DateTimeField(auto_now_add=True)
+    reviewed_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return self.comment

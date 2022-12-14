@@ -1,5 +1,7 @@
+from pip._internal import models
 from rest_framework import serializers
 
+from customers.serializers import CustomerProfileSerializer
 from mart.models import Categories, Tag, Materials, Product, ColorsOption, Lengths, SizesOption, Reviews, Images, \
     Brands, Occasion
 
@@ -109,3 +111,10 @@ class ReviewSerializer(serializers.ModelSerializer):
     class Meta:
         model = Reviews
         fields = "__all__"
+
+class ReviewReadSerializer(serializers.ModelSerializer):
+    customer = CustomerProfileSerializer(required=False, read_only=True)
+    class Meta:
+        model = Reviews
+        fields = "__all__"
+        # depth = 2

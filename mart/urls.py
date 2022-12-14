@@ -18,6 +18,4 @@ urlpatterns = [
 
     path('new-products/', get_new_products, name="new_products"),
     path('onsale/', get_onsale_products, name="onsale"),
-
-    path('review/', review_products, name="reviews")
 ]

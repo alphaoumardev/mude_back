@@ -1,3 +1,5 @@
+from mart.models import Reviews
+from mart.serializers import ReviewSerializer
 from orders.models import *
 from datetime import datetime
 from rest_framework import status
@@ -313,6 +315,12 @@ def create_order(request, ):
 
                 carts = CartItem.objects.filter(customer=current_customer, paid=False)
                 order = Order.objects.filter(customer=current_customer).last()
+                all_my_orders = Order.objects.filter(customer=current_customer,)
+
+                # for item_count in all_my_orders:
+                #     order.order_items_count = item_count.count()
+                #     order.save()
+
                 for p in carts:
                     p.paid = True
                     p.save()
@@ -398,6 +406,7 @@ def get_my_orders(request):
         return Response(serializer.data)
     except Exception as e:
         return Response({"message": f"{e}"}, status=status.HTTP_204_NO_CONTENT)
+
 
 
 @api_view(['GET'])
@@ -607,3 +616,17 @@ class CreateCartApiView(ListCreateAPIView):
 #
 #         except Exception as e:
 #             return Response("An error occur when creating the order", e)
+
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def post_review_product(request):
+    try:
+        if request.method == "POST":
+            serializer = ReviewSerializer(data=request.data, many=False)
+            if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data)
+            return Response(serializer.errors)
+    except Exception as e:
+        return Response({"message": f"{e}"}, status=status.HTTP_204_NO_CONTENT)

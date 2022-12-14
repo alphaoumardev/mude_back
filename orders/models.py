@@ -52,6 +52,8 @@ class OrderItem(models.Model):
     color = models.CharField(max_length=20, null=True, blank=True)
     size = models.CharField(max_length=20, null=True, blank=True)
 
+    def order_count(self):
+        return self.product.count()
     # def __str__(self):
     #     return self.product.name
 
@@ -77,6 +79,7 @@ class Order(models.Model):
     checked_out = models.BooleanField(default=False)
     isPaid = models.BooleanField(default=False)
     paid_at = models.DateTimeField(auto_now_add=True, null=True)
+    order_items_count = models.IntegerField(default=1)
 
     isDelivered = models.BooleanField(default=False)
     delivered_at = models.DateTimeField(auto_now_add=True, null=True)
