@@ -1,13 +1,33 @@
 from django.db import models
 from django.contrib.auth.models import User, AbstractUser
 from django.utils.safestring import mark_safe
+# from mptt.fields import TreeForeignKey
+# from mptt.models import MPTTModel
+from mptt.models import MPTTModel, TreeForeignKey
 
 from customers.models import CustomerProfile
 
 
+class Genre(MPTTModel):
+    name = models.CharField(max_length=50, unique=True)
+    parent = TreeForeignKey('self', on_delete=models.CASCADE, null=True, blank=True, related_name='subcates')
+
+    # class MPTTMeta:
+    #     order_insertion_by = ['name']
+    def __str__(self):
+        return self.name
+
+class Taga(models.Model):
+    parent = models.ForeignKey(Genre, on_delete=models.CASCADE, null=True, blank=True, related_name="taigao", )
+    taga_name = models.CharField(blank=True, null=True, max_length=15, unique=True)
+
+    def __str__(self):
+        return self.taga_name
+
+
 class Categories(models.Model):
-    parent = models.ForeignKey('self', on_delete=models.CASCADE, related_name="subcates", null=True, blank=True)
-    name = models.CharField(max_length=30, null=True, blank=True)
+    parent = models.ForeignKey('self', on_delete=models.CASCADE, null=True, blank=True, related_name="subcates", )
+    name = models.CharField(max_length=30, null=True, blank=True, )
 
     def __str__(self):
         cate = [self.name]
@@ -17,7 +37,8 @@ class Categories(models.Model):
             root = root.parent
         return " -> ".join(cate[::-1])
 
-    class Meta:
+    class MPTTMeta:
+        order_insertion_by = ['name']
         verbose_name_plural = 'Categories'
 
     # @property

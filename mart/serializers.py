@@ -1,9 +1,8 @@
-from pip._internal import models
 from rest_framework import serializers
 
 from customers.serializers import CustomerProfileSerializer
 from mart.models import Categories, Tag, Materials, Product, ColorsOption, Lengths, SizesOption, Reviews, Images, \
-    Brands, Occasion
+    Brands, Occasion, Genre
 
 
 class ArticleSerializer(serializers.ModelSerializer):
@@ -18,12 +17,12 @@ class CategoriesSerializer(serializers.ModelSerializer):
     class Meta:
         model = Categories
         fields = '__all__'
-        depth = 1
+        depth = 3
 
-    # @staticmethod
-    # def get_articles(obj):
-    #     pro = Product.objects.select_related("category")
-    #     return ProductSerializer(pro, many=True).data
+    @staticmethod
+    def get_articles(obj):
+        pro = Product.objects.select_related("category")
+        return ProductSerializer(pro, many=True).data
 
     def get_fields(self):
         fields = super(CategoriesSerializer, self).get_fields()

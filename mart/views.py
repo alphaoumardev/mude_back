@@ -7,8 +7,9 @@ from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from orders.serializers import ReviewSerializer
 from mart.serializers import *
+from mart.models import Genre
+
 
 
 @api_view(["GET"])
@@ -16,6 +17,7 @@ from mart.serializers import *
 def get_all_categories(request):
     if request.method == "GET":
         categories = Categories.objects.filter(parent=None)
+        # print(categories.all())
         serializer = CategoriesSerializer(categories, many=True)
         return Response(serializer.data)
 
@@ -24,7 +26,9 @@ def get_all_categories(request):
 @permission_classes([AllowAny])
 def get_product_by_parent(request, name=None, ):
     if request.method == "GET":
-        category = Categories.objects.filter(parent__name=name).first()
+        category = Categories.objects.filter(parent__parent=name).first()
+        # s=category.subarticles.all()
+        # print(s)
         items = Product.objects.filter(category=category)
         serializer = ProductSerializer(items, many=True)
         return Response(serializer.data)

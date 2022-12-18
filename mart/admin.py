@@ -2,7 +2,7 @@ from django.contrib import admin
 from django.contrib.admin.options import InlineModelAdmin
 
 from mart.models import Categories, Tag, Materials, \
-    Lengths, ColorsOption, SizesOption, Product, Reviews, Brands, Occasion, Images
+    Lengths, ColorsOption, SizesOption, Product, Reviews, Brands, Occasion, Images, Genre, Taga
 
 
 class ImageAd(admin.TabularInline):
@@ -25,3 +25,5 @@ admin.site.register(Product, ProductAdmins)
 admin.site.register(Images)
 admin.site.register(Reviews)
 
+admin.site.register(Genre)
+admin.site.register(Taga)
