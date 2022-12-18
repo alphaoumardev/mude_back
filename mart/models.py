@@ -10,7 +10,12 @@ class Categories(models.Model):
     name = models.CharField(max_length=30, null=True, blank=True)
 
     def __str__(self):
-        return self.name
+        cate = [self.name]
+        root = self.parent
+        while root is not None:
+            cate.append(root.name)
+            root = root.parent
+        return " -> ".join(cate[::-1])
 
     class Meta:
         verbose_name_plural = 'Categories'
