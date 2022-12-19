@@ -7,11 +7,12 @@ from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from mart.models import Categories, Product, ColorsOption, Tag, SizesOption, Materials, Occasion, Brands, Lengths, \
-    Reviews
+from mart.models import Categories, Product, ColorsOption, \
+    Tag, SizesOption, Materials, Occasion, Brands, Lengths, Reviews
+
 from mart.serializers import ProductSerializer, ColorsOptionSerializer, TagSerializer, \
-    SizeSerialiser, MaterialSerializer, OccasionSerializer, BrandSerializer, LengthSerializer, ReviewReadSerializer, \
-    CategorySerializer, ByCategorySerializer
+    SizeSerialiser, MaterialSerializer, OccasionSerializer, \
+    BrandSerializer, LengthSerializer, ReviewReadSerializer
 
 """To Jenny"""
 
@@ -34,17 +35,6 @@ def get_product_by_parent(request, name=None):
         items = Product.objects.filter(category=category)
         serializer = ProductSerializer(items, many=True)
         return Response(serializer.data)
-
-
-# @api_view(["GET", "POST"])
-# @permission_classes([AllowAny])
-# def get_product_by_category(request, parent=None, name=None, subcate=None):
-#     if request.method == "GET":
-#         category = Categories.objects.filter(parent__name=parent).filter(name=name).filter(
-#             subcates__name=subcate).first()
-#         items = Product.objects.filter(category=category)
-#         serializer = ProductSerializer(items, many=True)
-#         return Response(serializer.data)
 
 
 class MyPageNumberPagination(PageNumberPagination):
@@ -125,7 +115,7 @@ def get_variations_filter(request):
                 "lengths": length_serializer.data
             })
         except Exception as e:
-            return Response({"message": f'{e}'}, status=status.HTTP_204_NO_CONTENT)
+            return Response({"message": '{}'.format(e)}, status=status.HTTP_204_NO_CONTENT)
 
 
 # Here are just for the products

@@ -1,4 +1,3 @@
-from mart.models import Reviews
 from mart.serializers import ReviewSerializer
 from orders.models import *
 from datetime import datetime
@@ -41,7 +40,7 @@ def create_cart(request):
                     "cart_count": cart_count,
                 })
         except Exception as e:
-            return Response({"message": f"{e}", }, status=status.HTTP_204_NO_CONTENT)
+            return Response({"message": '{}'.format(e), }, status=status.HTTP_204_NO_CONTENT)
 
     if request.method == "POST":
         try:
@@ -82,7 +81,8 @@ def create_cart(request):
                 cart_item.save()
                 return Response(serializer.data)
         except Exception as e:
-            return Response({"message": f"{e}", }, status=status.HTTP_204_NO_CONTENT)
+            return Response({"message": '{}'.format(e), }, status=status.HTTP_204_NO_CONTENT)
+
 
 class CartItemView(RetrieveUpdateDestroyAPIView):
     serializer_class = CartItemSerializer
@@ -104,7 +104,7 @@ class CartItemView(RetrieveUpdateDestroyAPIView):
             serializer = self.get_serializer(cart_item)
             return Response(serializer.data)
         except Exception as e:
-            return Response({"message": f"{e}", }, status=status.HTTP_204_NO_CONTENT)
+            return Response({"message": '{}'.format(e), }, status=status.HTTP_204_NO_CONTENT)
 
     def update(self, request, *args, **kwargs):
         """
@@ -138,7 +138,7 @@ class CartItemView(RetrieveUpdateDestroyAPIView):
                 serializer.save()
             return Response(serializer.data)
         except Exception as e:
-            return Response({"message": f"{e}", }, status=status.HTTP_204_NO_CONTENT)
+            return Response({"message": '{}'.format(e), }, status=status.HTTP_204_NO_CONTENT)
 
     def destroy(self, request, *args, **kwargs):
         """
@@ -191,7 +191,7 @@ def create_wishlist(request, ):
                 return Response(serializer.data)
             return Response(serializer.errors)
         except Exception as e:
-            return Response({"message": f"{e}"}, status=status.HTTP_204_NO_CONTENT)
+            return Response({"message": '{}'.format(e)}, status=status.HTTP_204_NO_CONTENT)
 
 
 @api_view(["GET", "PUT", "DELETE"])
@@ -219,7 +219,7 @@ def operate_wishlist(request, pk):
                 serializer.save()
             return Response(serializer.data)
         except Exception as e:
-            return Response({"message": f"{e}"}, status=status.HTTP_204_NO_CONTENT)
+            return Response({"message": '{}'.format(e)}, status=status.HTTP_204_NO_CONTENT)
 
     if request.method == 'DELETE':
         try:
@@ -227,7 +227,7 @@ def operate_wishlist(request, pk):
             wishlist_item.delete()
             return Response("The wishlist item is deleted")
         except Exception as e:
-            return Response({"message": f"{e}"}, status=status.HTTP_204_NO_CONTENT)
+            return Response({"message": '{}'.format(e)}, status=status.HTTP_204_NO_CONTENT)
 
 
 @api_view(["GET", "POST"])
@@ -245,7 +245,7 @@ def create_address(request, ):
             serializer = ShippingAddressReadSerializer(shipping_address, many=False)
             return Response(serializer.data)
         except Exception as e:
-            return Response({"message": f"{e}"}, status=status.HTTP_204_NO_CONTENT)
+            return Response({"message": '{}'.format(e)}, status=status.HTTP_204_NO_CONTENT)
 
     if request.method == "POST":
         try:
@@ -268,7 +268,7 @@ def create_address(request, ):
                 return Response(serializer.data)
             return Response(serializer.errors)
         except Exception as e:
-            return Response({"message": f"{e}"}, status=status.HTTP_204_NO_CONTENT)
+            return Response({"message": '{}'.format(e)}, status=status.HTTP_204_NO_CONTENT)
 
 
 @api_view(["GET"])
@@ -286,7 +286,7 @@ def get_order_items(request, ):
             serializer = OrderItemReadSerializer(order_item, many=True)
             return Response(serializer.data)
     except Exception as e:
-        return Response({"message": f"{e}"}, status=status.HTTP_204_NO_CONTENT)
+        return Response({"message": '{}'.format(e)}, status=status.HTTP_204_NO_CONTENT)
 
 
 @api_view(["GET", "POST"])
@@ -304,7 +304,7 @@ def create_order(request, ):
             serializer = OrderReadSerializer(orders, many=True)
             return Response(serializer.data)
     except Exception as e:
-        return Response({"message": f"{e}"}, status=status.HTTP_204_NO_CONTENT)
+        return Response({"message": '{}'.format(e)}, status=status.HTTP_204_NO_CONTENT)
 
     if request.method == "POST":
         try:
@@ -315,7 +315,7 @@ def create_order(request, ):
 
                 carts = CartItem.objects.filter(customer=current_customer, paid=False)
                 order = Order.objects.filter(customer=current_customer).last()
-                all_my_orders = Order.objects.filter(customer=current_customer,)
+                # all_my_orders = Order.objects.filter(customer=current_customer,)
 
                 # for item_count in all_my_orders:
                 #     order.order_items_count = item_count.count()
@@ -332,7 +332,7 @@ def create_order(request, ):
                 return Response(serializer.data)
             return Response(serializer.errors)
         except Exception as e:
-            return Response({"message": f"{e}"}, status=status.HTTP_204_NO_CONTENT)
+            return Response({"message": '{}'.format(e)}, status=status.HTTP_204_NO_CONTENT)
 
 
 @api_view(["GET", "POST"])
@@ -357,8 +357,7 @@ def create_order_item(request, pk):
                     "orders_total": orders_total,
                 })
         except Exception as e:
-            return Response({"message": f"{e}"}, status=status.HTTP_204_NO_CONTENT)
-
+            return Response({"message": '{}'.format(e)}, status=status.HTTP_204_NO_CONTENT)
 
     if request.method == "POST":
         try:
@@ -388,7 +387,7 @@ def create_order_item(request, pk):
                 return Response(serializer.data)
             return Response(serializer.errors)
         except Exception as e:
-            return Response({"message": f"{e}"}, status=status.HTTP_204_NO_CONTENT)
+            return Response({"message": '{}'.format(e)}, status=status.HTTP_204_NO_CONTENT)
 
 
 @api_view(['GET'])
@@ -405,8 +404,7 @@ def get_my_orders(request):
         serializer = OrderReadSerializer(orders, many=True)
         return Response(serializer.data)
     except Exception as e:
-        return Response({"message": f"{e}"}, status=status.HTTP_204_NO_CONTENT)
-
+        return Response({"message": '{}'.format(e)}, status=status.HTTP_204_NO_CONTENT)
 
 
 @api_view(['GET'])
@@ -421,7 +419,7 @@ def get_orders(request):
         serializer = OrderSerializer(orders, many=True)
         return Response(serializer.data)
     except Exception as e:
-        return Response({"message": f"{e}"}, status=status.HTTP_204_NO_CONTENT)
+        return Response({"message": '{}'.format(e)}, status=status.HTTP_204_NO_CONTENT)
 
 
 @api_view(['GET'])
@@ -442,7 +440,7 @@ def get_order_by_id(request, pk):
         else:
             return Response('Not authorized to view this order', status=status.HTTP_400_BAD_REQUEST)
     except Exception as e:
-        return Response(f'Order does not exist {e}', status=status.HTTP_400_BAD_REQUEST)
+        return Response('{} Order does not exist'.format(e), status=status.HTTP_400_BAD_REQUEST)
     # finally:
     #     return Response("This order does not exist")
 
@@ -462,7 +460,7 @@ def update_order_to_paid(request, pk):
         order.save()
         return Response('Order Purchased')
     except Exception as e:
-        return Response({"message": f"{e}"}, status=status.HTTP_204_NO_CONTENT)
+        return Response({"message": '{}'.format(e)}, status=status.HTTP_204_NO_CONTENT)
 
 
 @api_view(['PUT'])
@@ -497,7 +495,7 @@ class CartItemViews(APIView):
                 return Response({serializer.data}, status=status.HTTP_400_BAD_REQUEST)
 
         except Exception as e:
-            return Response({"message": f"{e}"}, status=status.HTTP_204_NO_CONTENT)
+            return Response({"message": '{}'.format(e)}, status=status.HTTP_204_NO_CONTENT)
 
     @staticmethod
     def get(request, pk=None):
@@ -587,6 +585,7 @@ class CreateCartApiView(ListCreateAPIView):
         cart.save()
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
+
 # class OrderView(APIView):
 #     permission_classes = [IsAuthenticated]
 #
@@ -629,4 +628,4 @@ def post_review_product(request):
                 return Response(serializer.data)
             return Response(serializer.errors)
     except Exception as e:
-        return Response({"message": f"{e}"}, status=status.HTTP_204_NO_CONTENT)
+        return Response({"message": '{}'.format(e)}, status=status.HTTP_204_NO_CONTENT)
