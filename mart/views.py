@@ -3,45 +3,48 @@ from django.http import Http404
 from rest_framework import viewsets, status
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.pagination import PageNumberPagination
-from rest_framework.permissions import AllowAny, IsAuthenticated
+from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from mart.serializers import *
-from mart.models import Genre
+from mart.models import Categories, Product, ColorsOption, Tag, SizesOption, Materials, Occasion, Brands, Lengths, \
+    Reviews
+from mart.serializers import ProductSerializer, ColorsOptionSerializer, TagSerializer, \
+    SizeSerialiser, MaterialSerializer, OccasionSerializer, BrandSerializer, LengthSerializer, ReviewReadSerializer, \
+    CategorySerializer, ByCategorySerializer
+
+"""To Jenny"""
 
 
-
-@api_view(["GET"])
-@permission_classes([AllowAny])
-def get_all_categories(request):
-    if request.method == "GET":
-        categories = Categories.objects.filter(parent=None)
-        # print(categories.all())
-        serializer = CategoriesSerializer(categories, many=True)
-        return Response(serializer.data)
+# print('\n'.join
+#       ([''.join
+#         ([('Jenny'[(x - y) % 5]
+#            if ((x * 0.05) ** 2 + (y * 0.1) ** 2 - 1)
+#               ** 3 - (x * 0.05) ** 2 * (y * 0.1)
+#               ** 3 <= 0 else ' ')
+#           for x in range(-30, 30)])
+#         for y in range(15, -15, -1)]))
 
 
 @api_view(["GET", "POST"])
 @permission_classes([AllowAny])
-def get_product_by_parent(request, name=None, ):
+def get_product_by_parent(request, name=None):
     if request.method == "GET":
-        category = Categories.objects.filter(parent__parent=name).first()
-        # s=category.subarticles.all()
-        # print(s)
+        category = Categories.objects.filter(parent__name=name).first()
         items = Product.objects.filter(category=category)
         serializer = ProductSerializer(items, many=True)
         return Response(serializer.data)
 
 
-@api_view(["GET", "POST"])
-@permission_classes([AllowAny])
-def get_product_by_category(request, parent=None, name=None, subcate=None):
-    if request.method == "GET":
-        category = Categories.objects.filter(parent__name=parent).filter(name=name).filter(subcates__name=subcate).first()
-        items = Product.objects.filter(category=category)
-        serializer = ProductSerializer(items, many=True)
-        return Response(serializer.data)
+# @api_view(["GET", "POST"])
+# @permission_classes([AllowAny])
+# def get_product_by_category(request, parent=None, name=None, subcate=None):
+#     if request.method == "GET":
+#         category = Categories.objects.filter(parent__name=parent).filter(name=name).filter(
+#             subcates__name=subcate).first()
+#         items = Product.objects.filter(category=category)
+#         serializer = ProductSerializer(items, many=True)
+#         return Response(serializer.data)
 
 
 class MyPageNumberPagination(PageNumberPagination):

@@ -2,38 +2,59 @@ from rest_framework import serializers
 
 from customers.serializers import CustomerProfileSerializer
 from mart.models import Categories, Tag, Materials, Product, ColorsOption, Lengths, SizesOption, Reviews, Images, \
-    Brands, Occasion, Genre
+    Brands, Occasion
 
 
-class ArticleSerializer(serializers.ModelSerializer):
-    model = Product
-    fields = '__all__'
-
-
-class CategoriesSerializer(serializers.ModelSerializer):
+class CategorySerializer(serializers.ModelSerializer):
     subcates_count = serializers.SerializerMethodField()
-    # articles = ArticleSerializer(many=True,read_only=True, source="Product_set")
 
     class Meta:
         model = Categories
-        fields = '__all__'
-        depth = 3
-
-    @staticmethod
-    def get_articles(obj):
-        pro = Product.objects.select_related("category")
-        return ProductSerializer(pro, many=True).data
+        fields = "__all__"
+        depth = 5
 
     def get_fields(self):
-        fields = super(CategoriesSerializer, self).get_fields()
-        fields['subcates'] = CategoriesSerializer(many=True)
+        """
+        :return:
+        """
+        fields = super(CategorySerializer, self).get_fields()
+        fields['subcates'] = CategorySerializer(many=True)
         return fields
 
     @staticmethod
     def get_subcates_count(obj):
+        """
+        :param obj:
+        :return:
+        """
         if obj.is_parent:
             return obj.children().count()
         return obj.subcates.count()
+
+
+class ByCategorySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Categories
+        fields = '__all__'
+        depth = 5
+
+    def get_fields(self):
+        """
+        :return:
+        """
+        fields = super(ByCategorySerializer, self).get_fields()
+        fields['subcates'] = ByCategorySerializer(many=True)
+        return fields
+
+    articles = serializers.SerializerMethodField(method_name='get_articles', source="article")
+
+    @staticmethod
+    def get_articles(obj):  #To get the related articles
+        """
+        :param obj:
+        :return:
+        """
+        return ProductSerializer(obj.child_article, many=True).data
 
 
 class TagSerializer(serializers.ModelSerializer):
@@ -89,10 +110,11 @@ class ProductSerializer(serializers.ModelSerializer):
         model = Product
         fields = '__all__'
         depth = 1
+
     """Remember when the model does not have the field to add it here"""
     images = ImageSerializer(read_only=True, many=True)
 
-    # category = CategoriesSerializer(many=False, read_only=True,)# source='category_set'
+    # category = CategorySerializer(many=False, read_only=True,)# source='category_set'
     # tag = TagSerializer(read_only=True, many=True, required=False)
     # brand = BrandSerializer(read_only=True, required=False, many=False)
     # color = ColorsOptionSerializer(read_only=True, required=False, many=True)
@@ -111,8 +133,10 @@ class ReviewSerializer(serializers.ModelSerializer):
         model = Reviews
         fields = "__all__"
 
+
 class ReviewReadSerializer(serializers.ModelSerializer):
     customer = CustomerProfileSerializer(required=False, read_only=True)
+
     class Meta:
         model = Reviews
         fields = "__all__"

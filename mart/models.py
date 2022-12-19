@@ -1,28 +1,8 @@
 from django.db import models
 from django.contrib.auth.models import User, AbstractUser
 from django.utils.safestring import mark_safe
-# from mptt.fields import TreeForeignKey
-# from mptt.models import MPTTModel
-from mptt.models import MPTTModel, TreeForeignKey
 
 from customers.models import CustomerProfile
-
-
-class Genre(MPTTModel):
-    name = models.CharField(max_length=50, unique=True)
-    parent = TreeForeignKey('self', on_delete=models.CASCADE, null=True, blank=True, related_name='subcates')
-
-    # class MPTTMeta:
-    #     order_insertion_by = ['name']
-    def __str__(self):
-        return self.name
-
-class Taga(models.Model):
-    parent = models.ForeignKey(Genre, on_delete=models.CASCADE, null=True, blank=True, related_name="taigao", )
-    taga_name = models.CharField(blank=True, null=True, max_length=15, unique=True)
-
-    def __str__(self):
-        return self.taga_name
 
 
 class Categories(models.Model):
@@ -37,13 +17,12 @@ class Categories(models.Model):
             root = root.parent
         return " -> ".join(cate[::-1])
 
-    class MPTTMeta:
-        order_insertion_by = ['name']
+    class Meta:
         verbose_name_plural = 'Categories'
 
-    # @property
-    # def articles(self):
-    #     return self.product_set.all()
+    @property
+    def child_article(self):
+        return self.article.filter(category_id=self.id)
 
     def children(self):  # subcategories
         return Categories.objects.filter(parent=self)
@@ -119,7 +98,7 @@ class Occasion(models.Model):
 class Product(models.Model):
     SALES = (("Sale", "Sale"), ("New", "New"), ("Regular", "Regular"))
 
-    category = models.ForeignKey(Categories, on_delete=models.CASCADE, related_name="subarticles")
+    category = models.ForeignKey(Categories, on_delete=models.CASCADE, related_name="article")
     name = models.CharField(max_length=50, null=False)
     sku = models.BigIntegerField(blank=True, null=True)
     description = models.TextField(blank=False)
