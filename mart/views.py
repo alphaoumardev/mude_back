@@ -27,16 +27,6 @@ from mart.serializers import ProductSerializer, ColorsOptionSerializer, TagSeria
 #         for y in range(15, -15, -1)]))
 
 
-@api_view(["GET", "POST"])
-@permission_classes([AllowAny])
-def get_product_by_parent(request, name=None):
-    if request.method == "GET":
-        category = Categories.objects.filter(parent__name=name).first()
-        items = Product.objects.filter(category=category)
-        serializer = ProductSerializer(items, many=True)
-        return Response(serializer.data)
-
-
 class MyPageNumberPagination(PageNumberPagination):
     page_size = 8  # default page size
     page_size_query_param = 'size'  # ?page=xx&size=??

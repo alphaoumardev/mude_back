@@ -1,4 +1,7 @@
-from rest_framework import serializers
+from django.core.paginator import Paginator
+from rest_framework import serializers, request, status
+from rest_framework.pagination import PageNumberPagination
+from rest_framework.response import Response
 
 from customers.serializers import CustomerProfileSerializer
 from mart.models import Categories, Tag, Materials, Product, ColorsOption, Lengths, SizesOption, Reviews, Images, \
@@ -54,7 +57,15 @@ class ByCategorySerializer(serializers.ModelSerializer):
         :param obj:
         :return:
         """
-        return ProductSerializer(obj.child_article, many=True).data
+        # paginator = PageNumberPagination()
+        # paginator.page_size = 5
+        # paginator.page = obj
+        # # result_page = paginator.paginate_queryset(person_objects, request)
+        # return paginator.get_paginated_response(ProductSerializer(obj.child_article, many=True).data)
+
+        paginator = Paginator(object_list=obj.child_article, per_page=5).get_page(2)
+        # result = paginator.get_page(1)
+        return ProductSerializer(paginator, many=True).data
 
 
 class TagSerializer(serializers.ModelSerializer):
@@ -109,12 +120,12 @@ class ProductSerializer(serializers.ModelSerializer):
     class Meta:
         model = Product
         fields = '__all__'
-        depth = 1
+        depth = 5
 
     """Remember when the model does not have the field to add it here"""
     images = ImageSerializer(read_only=True, many=True)
 
-    # category = CategorySerializer(many=False, read_only=True,)# source='category_set'
+    # category = CategorySerializer(many=False, read_only=True,) # source='category_set'
     # tag = TagSerializer(read_only=True, many=True, required=False)
     # brand = BrandSerializer(read_only=True, required=False, many=False)
     # color = ColorsOptionSerializer(read_only=True, required=False, many=True)

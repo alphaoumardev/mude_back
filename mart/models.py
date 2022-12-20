@@ -22,7 +22,7 @@ class Categories(models.Model):
 
     @property
     def child_article(self):
-        return self.article.filter(category_id=self.id)
+        return self.article.filter(category=self)
 
     def children(self):  # subcategories
         return Categories.objects.filter(parent=self)
@@ -139,7 +139,8 @@ class Images(models.Model):
 
     def image_preview(self):
         if self.image:
-            return mark_safe(f'<img src="{self.image.url}" style="width: 50px; height:50px; object-fit:contain;" />')
+            return mark_safe(
+                '<img src="{}" style="width: 50px; height:50px; object-fit:contain;" />'.format(self.image.url))
         else:
             return 'No image found'
 
