@@ -162,6 +162,14 @@ class ProductFilterViewSet(viewsets.ModelViewSet):
     serializer_class = ProductSerializer
     pagination_class = MyPageNumberPagination
 
+    def get_queryset(self):
+        queryset = self.queryset
+        category = self.request.query_params.get('category', None)
+        if category is not None:
+            category = get_object_or_404(Category, pk=category)
+            queryset = queryset.filter(category__in=category.get_descendants(include_self=True))
+        return queryset
+
     # def get_queryset(self):
     #     queryset = self.queryset
     #     category = self.request.query_params.get('category', None)
@@ -192,11 +200,3 @@ class ProductFilterViewSet(viewsets.ModelViewSet):
     #         queryset = queryset.filter(Q(category__level=2) & Q(category__parent_name=second),
     #                                    category_name=third)
     #     return queryset
-
-    def get_queryset(self):
-        queryset = self.queryset
-        category = self.request.query_params.get('category', None)
-        if category is not None:
-            category = get_object_or_404(Category, pk=category)
-            queryset = queryset.filter(category__in=category.get_descendants(include_self=True))
-        return queryset
