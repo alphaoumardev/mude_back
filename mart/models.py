@@ -4,34 +4,48 @@ from django.utils.safestring import mark_safe
 
 from customers.models import CustomerProfile
 
+from django.db import models
+from mptt.models import MPTTModel, TreeForeignKey
 
-class Categories(models.Model):
-    parent = models.ForeignKey('self', on_delete=models.CASCADE, null=True, blank=True, related_name="subcates", )
-    name = models.CharField(max_length=30, null=True, blank=True, )
+
+# class Categories(models.Model):
+#     parent = models.ForeignKey('self', on_delete=models.CASCADE, null=True, blank=True, related_name="subcates", )
+#     name = models.CharField(max_length=30, null=True, blank=True, )
+#
+#     def __str__(self):
+#         cate = [self.name]
+#         root = self.parent
+#         while root is not None:
+#             cate.append(root.name)
+#             root = root.parent
+#         return " -> ".join(cate[::-1])
+#
+#     class Meta:
+#         verbose_name_plural = 'Categories'
+#
+#     @property
+#     def child_article(self):
+#         return self.article.filter(category=self).order_by('category_id').reverse()
+#
+#     def children(self):  # subcategories
+#         return Categories.objects.filter(parent=self)
+#
+#     @property
+#     def is_parent(self):
+#         if self.parent is not None:
+#             return False
+#         return True
+
+
+class Category(MPTTModel):
+    name = models.CharField(max_length=50, null=True, blank=True)
+    parent = TreeForeignKey('self', on_delete=models.CASCADE, null=True, blank=True, related_name='children')
+
+    class MPTTMeta:
+        order_insertion_by = ['name']
 
     def __str__(self):
-        cate = [self.name]
-        root = self.parent
-        while root is not None:
-            cate.append(root.name)
-            root = root.parent
-        return " -> ".join(cate[::-1])
-
-    class Meta:
-        verbose_name_plural = 'Categories'
-
-    @property
-    def child_article(self):
-        return self.article.filter(category=self)
-
-    def children(self):  # subcategories
-        return Categories.objects.filter(parent=self)
-
-    @property
-    def is_parent(self):
-        if self.parent is not None:
-            return False
-        return True
+        return self.name
 
 
 class Tag(models.Model):
@@ -97,8 +111,9 @@ class Occasion(models.Model):
 
 class Product(models.Model):
     SALES = (("Sale", "Sale"), ("New", "New"), ("Regular", "Regular"))
+    category = TreeForeignKey(Category, on_delete=models.CASCADE, related_name="articles", null=True, blank=True)
 
-    category = models.ForeignKey(Categories, on_delete=models.CASCADE, related_name="article")
+    # category = models.ForeignKey(Categories, on_delete=models.CASCADE, related_name="article")
     name = models.CharField(max_length=50, null=False)
     sku = models.BigIntegerField(blank=True, null=True)
     description = models.TextField(blank=False)

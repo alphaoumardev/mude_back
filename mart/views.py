@@ -7,7 +7,7 @@ from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from mart.models import Categories, Product, ColorsOption, \
+from mart.models import Category, Product, ColorsOption, \
     Tag, SizesOption, Materials, Occasion, Brands, Lengths, Reviews
 
 from mart.serializers import ProductSerializer, ColorsOptionSerializer, TagSerializer, \
@@ -48,6 +48,20 @@ class ArticleViewSet(viewsets.ModelViewSet):
     serializer_class = ProductSerializer
     pagination_class = MyPageNumberPagination
     permission_classes = [AllowAny]
+
+
+class GetProductByCategory(viewsets.ModelViewSet):
+    queryset = Product.objects.all()
+    serializer_class = ProductSerializer
+    pagination_class = MyPageNumberPagination
+    permission_classes = [AllowAny]
+
+    def get_queryset(self):
+        queryset = self.queryset
+        category = self.request.query_params.get('category', None)
+        if category:
+            queryset = queryset.filter(category_id=category)
+        return queryset
 
 
 class SingleProduct(APIView):
@@ -153,7 +167,7 @@ def get_one_product(request, pk):
 @permission_classes([AllowAny])
 def get_pro_by_category(request, pk):
     if request.method == "GET":
-        category = Categories.objects.get(id=pk)
+        category = Category.objects.get(id=pk)
         variant = Product.objects.filter(category=category).order_by('-id')
         serializer = ProductSerializer(variant, many=True)
         return Response(serializer.data)

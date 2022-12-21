@@ -4,68 +4,89 @@ from rest_framework.pagination import PageNumberPagination
 from rest_framework.response import Response
 
 from customers.serializers import CustomerProfileSerializer
-from mart.models import Categories, Tag, Materials, Product, ColorsOption, Lengths, SizesOption, Reviews, Images, \
-    Brands, Occasion
+from mart.models import *
+
+
+# class CateFirstSerializer(serializers.ModelSerializer):
+#     subcates_count = serializers.SerializerMethodField()
+#
+#     class Meta:
+#         model = Categories
+#         fields = "__all__"
+#         depth = 5
+#
+#     def get_fields(self):
+#         """
+#         :return:
+#         """
+#         fields = super(CateFirstSerializer, self).get_fields()
+#         fields['subcates'] = CateFirstSerializer(many=True)
+#         return fields
+#
+#     @staticmethod
+#     def get_subcates_count(obj):
+#         """
+#         :param obj:
+#         :return:
+#         """
+#         if obj.is_parent:
+#             return obj.children().count()
+#         return obj.subcates.count()
+#
+#
+# class ByCategorySerializer(serializers.ModelSerializer):
+#     class Meta:
+#         model = Categories
+#         fields = '__all__'
+#         depth = 5
+#
+#     def get_fields(self):
+#         """
+#         :return:
+#         """
+#         fields = super(ByCategorySerializer, self).get_fields()
+#         fields['subcates'] = ByCategorySerializer(many=True)
+#         return fields
+#
+#     articles = serializers.SerializerMethodField(method_name='get_articles', source="article")
+#
+#     @staticmethod
+#     def get_articles(obj):  #To get the related articles
+#         """
+#         :param obj:
+#         :return:
+#         """
+#         # paginator = PageNumberPagination()
+#         # paginator.page_size = 5
+#         # paginator.page = obj
+#         # # result_page = paginator.paginate_queryset(person_objects, request)
+#         # return paginator.get_paginated_response(ProductSerializer(obj.child_article, many=True).data)
+#
+#         paginator = Paginator(object_list=obj.child_article, per_page=5).get_page(2)
+#         # result = paginator.get_page(1)
+#         return ProductSerializer(paginator, many=True).data
 
 
 class CategorySerializer(serializers.ModelSerializer):
-    subcates_count = serializers.SerializerMethodField()
-
     class Meta:
-        model = Categories
-        fields = "__all__"
-        depth = 5
+        model = Category
+        fields = ['name', 'parent']
+        depth = 4
+
+    @staticmethod
+    def get_parent(obj):
+        if obj.parent is not None:
+            return CategorySerializer(obj.parent).data
+        else:
+            return None
 
     def get_fields(self):
         """
         :return:
         """
         fields = super(CategorySerializer, self).get_fields()
-        fields['subcates'] = CategorySerializer(many=True)
+        fields['children'] = CategorySerializer(many=True)
         return fields
-
-    @staticmethod
-    def get_subcates_count(obj):
-        """
-        :param obj:
-        :return:
-        """
-        if obj.is_parent:
-            return obj.children().count()
-        return obj.subcates.count()
-
-
-class ByCategorySerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Categories
-        fields = '__all__'
-        depth = 5
-
-    def get_fields(self):
-        """
-        :return:
-        """
-        fields = super(ByCategorySerializer, self).get_fields()
-        fields['subcates'] = ByCategorySerializer(many=True)
-        return fields
-
-    articles = serializers.SerializerMethodField(method_name='get_articles', source="article")
-
-    @staticmethod
-    def get_articles(obj):  #To get the related articles
-        """
-        :param obj:
-        :return:
-        """
-        # paginator = PageNumberPagination()
-        # paginator.page_size = 5
-        # paginator.page = obj
-        # # result_page = paginator.paginate_queryset(person_objects, request)
-        # return paginator.get_paginated_response(ProductSerializer(obj.child_article, many=True).data)
-
-        paginator = Paginator(object_list=obj.child_article, per_page=5).get_page(2)
-        # result = paginator.get_page(1)
-        return ProductSerializer(paginator, many=True).data
 
 
 class TagSerializer(serializers.ModelSerializer):
@@ -120,7 +141,7 @@ class ProductSerializer(serializers.ModelSerializer):
     class Meta:
         model = Product
         fields = '__all__'
-        depth = 5
+        depth = 1
 
     """Remember when the model does not have the field to add it here"""
     images = ImageSerializer(read_only=True, many=True)

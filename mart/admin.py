@@ -1,7 +1,6 @@
 from django.contrib import admin
-
-from mart.models import Categories, Tag, Materials, \
-    Lengths, ColorsOption, SizesOption, Product, Reviews, Brands, Occasion, Images
+from mptt.admin import MPTTModelAdmin, DraggableMPTTAdmin
+from mart.models import *
 
 
 class ImageAd(admin.TabularInline):
@@ -12,7 +11,6 @@ class ProductAdmins(admin.ModelAdmin):
     inlines = [ImageAd, ]
 
 
-admin.site.register(Categories)
 admin.site.register(Tag)
 admin.site.register(Materials)
 admin.site.register(Lengths)
@@ -23,3 +21,5 @@ admin.site.register(Occasion)
 admin.site.register(Product, ProductAdmins)
 admin.site.register(Images)
 admin.site.register(Reviews)
+
+admin.site.register(Category, DraggableMPTTAdmin)
