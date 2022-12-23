@@ -9,14 +9,49 @@ from rest_framework.response import Response
 from mart.models import Product, Category
 from mart.serializers import CategorySerializer, ProductSerializer
 
+"""USING MPTT MODEL"""
+
 
 @api_view(["GET"])
 @permission_classes([AllowAny])
-def get_all_categories(request):
+def get_mptt_categories(request):
     if request.method == "GET":
-        categories = Category.objects.filter(parent=None)
-        serializer = CategorySerializer(categories, many=True)
+        category = Category.objects.filter(parent=None)
+        serializer = CategorySerializer(category, many=True)
         return Response(serializer.data)
+
+
+class MyPageNumberPagination(PageNumberPagination):
+    page_size = 8  # default page size
+    page_size_query_param = 'size'  # ?page=xx&size=??
+
+    def get_paginated_response(self, data):
+        return Response({
+            'page_size': self.page_size,
+            'current_page_number': self.page.number,
+            'total_pages': self.page.paginator.num_pages,
+            'total_products': self.page.paginator.count,
+            'next': self.get_next_link(),
+            'previous': self.get_previous_link(),
+            'results': data,
+        })
+
+
+class FilterProductByCategory(viewsets.ModelViewSet):
+    queryset = Product.objects.all().order_by('id').reverse()
+    serializer_class = ProductSerializer
+    pagination_class = MyPageNumberPagination
+
+    def get_queryset(self):
+        queryset = self.queryset
+        category = self.request.query_params.get('category', None)
+        if category is not None:
+            category = get_object_or_404(Category, pk=category)
+            queryset = queryset.filter(category__in=category.get_descendants(include_self=True))
+        return queryset
+
+
+"""USING THE RECURSIVE MODEL"""
 
 
 @api_view(["GET"])
@@ -129,74 +164,34 @@ def get_product_by_third_cate(request, third):
         return Response(serializer.data)
 
 
-"""USING MPTT MODEL"""
+def get_queryset(self):
+    queryset = self.queryset
+    category = self.request.query_params.get('category', None)
+    if category is not None:
+        category_qs = Category.objects.filter(name=category)
+        if category_qs.exists():
+            category = category_qs.first()
+            queryset = queryset.filter(
+                Q(category_id__lft__gte=category.lft, category_id__rght__lte=category.rght) |
+                Q(category_id__parent__lft__gte=category.lft, category_id__parent__rght__lte=category.rght) |
+                Q(category_id__parent__parent__lft__gte=category.lft,
+                  category_id__parent__parent__rght__lte=category.rght)
+            )
+    return queryset
 
 
-@api_view(["GET"])
-@permission_classes([AllowAny])
-def get_mptt_cate(request):
-    if request.method == "GET":
-        category = Category.objects.all()
-        serializer = CategorySerializer(category, many=True)
-        return Response(serializer.data)
+def get_querysets(self):
+    queryset = self.queryset
+    first = self.request.query_params.get('first', None)
+    second = self.request.query_params.get('second', None)
+    third = self.request.query_params.get('third', None)
 
-
-class MyPageNumberPagination(PageNumberPagination):
-    page_size = 8  # default page size
-    page_size_query_param = 'size'  # ?page=xx&size=??
-
-    def get_paginated_response(self, data):
-        return Response({
-            'page_size': self.page_size,
-            'current_page_number': self.page.number,
-            'total_pages': self.page.paginator.num_pages,
-            'total_products': self.page.paginator.count,
-            'next': self.get_next_link(),
-            'previous': self.get_previous_link(),
-            'results': data,
-        })
-
-
-class ProductFilterViewSet(viewsets.ModelViewSet):
-    queryset = Product.objects.all().order_by('id').reverse()
-    serializer_class = ProductSerializer
-    pagination_class = MyPageNumberPagination
-
-    def get_queryset(self):
-        queryset = self.queryset
-        category = self.request.query_params.get('category', None)
-        if category is not None:
-            category = get_object_or_404(Category, pk=category)
-            queryset = queryset.filter(category__in=category.get_descendants(include_self=True))
-        return queryset
-
-    # def get_queryset(self):
-    #     queryset = self.queryset
-    #     category = self.request.query_params.get('category', None)
-    #     if category is not None:
-    #         category_qs = Category.objects.filter(name=category)
-    #         if category_qs.exists():
-    #             category = category_qs.first()
-    #             queryset = queryset.filter(
-    #                 Q(category_id__lft__gte=category.lft, category_id__rght__lte=category.rght) |
-    #                 Q(category_id__parent__lft__gte=category.lft, category_id__parent__rght__lte=category.rght) |
-    #                 Q(category_id__parent__parent__lft__gte=category.lft,
-    #                   category_id__parent__parent__rght__lte=category.rght)
-    #             )
-    #     return queryset
-
-    # def get_queryset(self):
-    #     queryset = self.queryset
-    #     first = self.request.query_params.get('first', None)
-    #     second = self.request.query_params.get('second', None)
-    #     third = self.request.query_params.get('third', None)
-    #
-    #     if first is not None:
-    #         queryset = queryset.filter(category__level=0, category_name=first)
-    #     if second is not None:
-    #         queryset = queryset.filter(Q(category__level=1) & Q(category__parent_name=first),
-    #                                    category_name=second)
-    #     if third is not None:
-    #         queryset = queryset.filter(Q(category__level=2) & Q(category__parent_name=second),
-    #                                    category_name=third)
-    #     return queryset
+    if first is not None:
+        queryset = queryset.filter(category__level=0, category_name=first)
+    if second is not None:
+        queryset = queryset.filter(Q(category__level=1) & Q(category__parent_name=first),
+                                   category_name=second)
+    if third is not None:
+        queryset = queryset.filter(Q(category__level=2) & Q(category__parent_name=second),
+                                   category_name=third)
+    return queryset
