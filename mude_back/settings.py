@@ -7,7 +7,6 @@ env = environ.Env()
 # reading .env file
 environ.Env.read_env()
 
-
 from rest_framework.settings import api_settings
 import openai
 

@@ -21,6 +21,7 @@ urlpatterns = [
 
     path('new-products/', get_new_products, name="new_products"),
     path('onsale/', get_onsale_products, name="onsale"),
+    path('trending-products/', get_trending_products, name="trending"),
 
     path('cates/<str:parent>/', get_by_parent_cate, name="by-parent"),
     path('cates/<str:parent>/<str:second>/', get_by_subcate_second_cate, name="by-parent_second"),

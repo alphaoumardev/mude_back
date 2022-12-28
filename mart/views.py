@@ -164,6 +164,15 @@ def get_one_product(request, pk):
 
 @api_view(["GET"])
 @permission_classes([AllowAny])
+def get_trending_products(request):
+    if request.method == "GET":
+        trending = Product.objects.filter(onsale='Sale')[:6]
+        items = ProductSerializer(trending, many=True)
+        return Response(items.data)
+
+
+@api_view(["GET"])
+@permission_classes([AllowAny])
 def get_pro_by_category(request, pk):
     if request.method == "GET":
         category = Category.objects.get(id=pk)
@@ -188,4 +197,3 @@ def get_onsale_products(request):
         new_products = Product.objects.filter(onsale='Sale')
         items = ProductSerializer(new_products, many=True)
         return Response(items.data)
-
