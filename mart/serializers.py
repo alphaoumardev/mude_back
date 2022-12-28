@@ -88,6 +88,7 @@ class ProductSerializer(serializers.ModelSerializer):
     @staticmethod
     def get_reviews(obj):
         return ReviewReadSerializer(obj.review, many=True).data
+
     """
     # images = serializers.SerializerMethodField()
     #
