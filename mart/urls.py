@@ -7,6 +7,7 @@ urlpatterns = [
 
     path('mptt-categories/', get_mptt_categories, name='mptts'),
     path('filter-products-by-category/', FilterProductByCategory.as_view({"get": "list"}), name="filter-products"),
+    path('filter-products-by-variant/', ProductVariant.as_view({'get': 'list'}), name="filtering-variants"),
 
     path('products_variant-filters/', get_variations_filter, name="products-filters"),
 
@@ -26,7 +27,7 @@ urlpatterns = [
     path('cates/<str:parent>/<str:second>/<str:third>/', get_by_subcates_third_cate, name="by-parent-third"),
     path('cates/<str:parent>/<str:second>/<str:third>/<str:variant>/', get_product_by_parent, name="by-pro"),
 
-    # path('pro/<str:parent>/', get_product_by_parent_cate, name="by-parent"),
-    # path('pro/<str:parent>/<str:second>/', get_product_by_parent_second_cate, name="by-second"),
+    path('pro/<str:parent>/', get_product_by_parent_cate, name="by-parent"),
+    path('pro/<str:parent>/<str:second>/', get_product_by_parent_second_cate, name="by-second"),
     path('products/<str:third>/', get_product_by_third_cate, name="by-third"),
 ]

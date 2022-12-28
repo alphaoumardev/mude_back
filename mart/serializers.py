@@ -29,49 +29,49 @@ class CategorySerializer(serializers.ModelSerializer):
 class TagSerializer(serializers.ModelSerializer):
     class Meta:
         model = Tag
-        fields = ["tag_name"]
+        fields = ["id", "tag_name"]
 
 
 class BrandSerializer(serializers.ModelSerializer):
     class Meta:
         model = Brands
-        fields = ["brand_name"]
+        fields = ["id", "brand_name"]
 
 
 class MaterialSerializer(serializers.ModelSerializer):
     class Meta:
         model = Materials
-        fields = ["material_name"]
+        fields = ["id", "material_name"]
 
 
 class ColorsOptionSerializer(serializers.ModelSerializer):
     class Meta:
         model = ColorsOption
-        fields = ["color_name"]
+        fields = ["id", "color_name"]
 
 
 class LengthSerializer(serializers.ModelSerializer):
     class Meta:
         model = Lengths
-        fields = ["length_name"]
+        fields = ["id", "length_name"]
 
 
 class OccasionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Occasion
-        fields = ["occasion_name"]
+        fields = ["id", "occasion_name"]
 
 
 class SizeSerialiser(serializers.ModelSerializer):
     class Meta:
         model = SizesOption
-        fields = ["size_name"]
+        fields = ["id", "size_name"]
 
 
 class ImageSerializer(serializers.ModelSerializer):
     class Meta:
         model = Images
-        fields = ["image"]
+        fields = ["id", "image"]
 
 
 class ProductSerializer(serializers.ModelSerializer):

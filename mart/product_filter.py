@@ -1,13 +1,16 @@
 from django.db.models import Q
+from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import status, viewsets
 from rest_framework.decorators import api_view, permission_classes
+from rest_framework.filters import SearchFilter
 from rest_framework.generics import get_object_or_404
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 
-from mart.models import Product, Category
-from mart.serializers import CategorySerializer, ProductSerializer
+from mart.models import Product, Category, Tag, SizesOption, ColorsOption
+from mart.serializers import CategorySerializer, ProductSerializer, TagSerializer, SizeSerialiser, \
+    ColorsOptionSerializer
 
 """USING MPTT MODEL"""
 
@@ -16,7 +19,7 @@ from mart.serializers import CategorySerializer, ProductSerializer
 @permission_classes([AllowAny])
 def get_mptt_categories(request):
     if request.method == "GET":
-        category = Category.objects.filter(parent=None)
+        category = Category.objects.filter(parent=None).order_by('id')
         serializer = CategorySerializer(category, many=True)
         return Response(serializer.data)
 
@@ -42,6 +45,11 @@ class FilterProductByCategory(viewsets.ModelViewSet):
     serializer_class = ProductSerializer
     pagination_class = MyPageNumberPagination
 
+    filter_backends = [DjangoFilterBackend, SearchFilter]
+    filterset_fields = ['color', 'brand', 'size', 'tag', 'lengths', 'materials', 'occasion']
+
+    search_fields = ['name', 'description']
+
     def get_queryset(self):
         queryset = self.queryset
         category = self.request.query_params.get('category', None)
@@ -51,7 +59,16 @@ class FilterProductByCategory(viewsets.ModelViewSet):
         return queryset
 
 
-"""USING THE RECURSIVE MODEL"""
+class ProductVariant(viewsets.ModelViewSet):
+    queryset = Product.objects.all().order_by('id').reverse()
+    serializer_class = ProductSerializer
+    filter_backends = [DjangoFilterBackend, SearchFilter]
+    filterset_fields = ['color', 'brand', 'size', 'tag', 'lengths', 'materials', 'occasion']
+    search_fields = ['name', 'description']
+    pagination_class = MyPageNumberPagination
+
+
+"""USING THE RECURSIVE MODEL 以下为综合模块。。。（我__）"""
 
 
 @api_view(["GET"])
@@ -195,3 +212,78 @@ def get_querysets(self):
         queryset = queryset.filter(Q(category__level=2) & Q(category__parent_name=second),
                                    category_name=third)
     return queryset
+
+
+@api_view(["GET"])
+@permission_classes([AllowAny])
+def get_colors(request):
+    if request.method == "GET":
+        colors = ColorsOption.objects.all()
+        items = ColorsOptionSerializer(colors, many=True)
+        return Response(items.data)
+
+
+@api_view(["GET"])
+@permission_classes([AllowAny])
+def get_sizes(request):
+    if request.method == "GET":
+        sizes = SizesOption.objects.all()
+        items = SizeSerialiser(sizes, many=True)
+        return Response(items.data)
+
+
+@api_view(["GET"])
+@permission_classes([AllowAny])
+def get_tags(request):
+    if request.method == "GET":
+        tags = Tag.objects.all()
+        items = TagSerializer(tags, many=True)
+        return Response(items.data)
+
+
+# Filter by color
+@api_view(["GET"])
+@permission_classes([AllowAny])
+def filter_by_color(request):
+    if request.method == "GET":
+        color = request.GET.get('color') if request.GET.get('color') is not None else ''
+        products = Product.objects.filter(Q(futuredimages__color_name__color_name=color))
+        serializer = ProductSerializer(products, many=True)
+        return Response(serializer.data)
+
+
+# Filter product by size
+@api_view(["GET"])
+@permission_classes([AllowAny])
+def filter_by_size(request):
+    if request.method == "GET":
+        size = request.GET.get('size') if request.GET.get('size') is not None else ''
+        products = Product.objects.filter(Q(variant__size__size_name=size))
+        serializer = ProductSerializer(products, many=True)
+        return Response(serializer.data)
+
+
+# Filter product by Tags
+@api_view(["GET"])
+@permission_classes([AllowAny])
+def filter_by_tag(request):
+    if request.method == "GET":
+        tag = request.GET.get('tag') if request.GET.get('tag') is not None else ''
+        products = Product.objects.filter(Q(variant__tag=tag) |
+                                          Q(variant__tag__tag_name=tag))
+        serializer = ProductSerializer(products, many=True)
+        return Response(serializer.data)
+
+
+# Filter product by Price
+@api_view(["GET"])
+@permission_classes([AllowAny])
+def filter_by_price(request):
+    if request.method == "GET":
+        less_price = request.GET.get('less_price') if request.GET.get('less_price') is not None else None
+        greater_price = request.GET.get('greater_price') if request.GET.get('greater_price') is not None else None
+        # price = Product.objects.get('price')
+        products = Product.objects.filter(price__gte=less_price,
+                                          price__lte=greater_price)
+        serializer = ProductSerializer(products, many=True)
+        return Response(serializer.data)

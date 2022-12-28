@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'corsheaders',
     'rest_framework',
     'mptt',
+    'django_filters',
     # 'cloudinary',
     # 'cloudinary_storage',
     'knox',
@@ -111,7 +112,9 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 MEDIA_URL = 'assets/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'assets/')
 
-REST_FRAMEWORK = {'DEFAULT_AUTHENTICATION_CLASSES': ('knox.auth.TokenAuthentication',), }
+REST_FRAMEWORK = {'DEFAULT_AUTHENTICATION_CLASSES': ('knox.auth.TokenAuthentication',),
+                  'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend'],
+                  }
 
 # CORS_ORIGNS_ALLOW_ALL = True
 CORS_ALLOW_METHODS = [
