@@ -45,5 +45,14 @@ def password_reset_token_created(sender, instance, reset_password_token, *args, 
         [reset_password_token.user.email]
     )
 
+
 # post_save.connect(create_user_profile, sender=User)
 # post_save.connect(save_user_profile, sender=User)
+
+class ContactUs(models.Model):
+    customer = models.ForeignKey(CustomerProfile, on_delete=models.CASCADE, null=True, blank=True)
+    subject = models.CharField(blank=True, max_length=30, null=True)
+    content = models.TextField()
+
+    def __str__(self):
+        return self.subject
