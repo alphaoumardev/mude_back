@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from django.contrib.auth.models import User
 
-from customers.models import CustomerProfile
+from customers.models import CustomerProfile, ContactUs
 
 
 # User Serializer
@@ -58,4 +58,10 @@ class CustomerProfileSerializer(serializers.ModelSerializer):
 class CustomerProfilePostSerializer(serializers.ModelSerializer):
     class Meta:
         model = CustomerProfile
+        fields = '__all__'
+
+
+class ConstactUsSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ContactUs
         fields = '__all__'

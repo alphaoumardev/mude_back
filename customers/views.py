@@ -1,6 +1,6 @@
-from customers.models import CustomerProfile
+from customers.models import CustomerProfile, ContactUs
 from customers.serializers import UserSerializer, RegisterSerializer, \
-    ChangePasswordSerializer, CustomerProfileSerializer
+    ChangePasswordSerializer, CustomerProfileSerializer, ConstactUsSerializer
 
 from django.contrib.auth import login
 from django.contrib.auth.models import User
@@ -97,6 +97,34 @@ class UserAPI(generics.RetrieveAPIView):
 @permission_classes([IsAuthenticated])
 @api_view(['POST', 'PATCH', 'GET'])
 def get_customer_profile(request):
+    """
+    :param request:
+    :return:
+    """
+    if request.method == "GET":
+        profile = CustomerProfile.objects.get(user_id=request.user.id)
+        serializer = CustomerProfileSerializer(profile, many=False)
+        return Response(serializer.data)
+
+    if request.method == "POST":
+        serializer = CustomerProfileSerializer(data=request.data, many=False)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors)
+
+    if request.method == "PATCH":
+        user = request.user.id
+        customer = CustomerProfile.objects.get(id=user)
+        seriliazer = CustomerProfileSerializer(instance=customer, data=request.data)
+        if seriliazer.is_valid():
+            seriliazer.save()
+        return Response(seriliazer.data)
+
+
+@permission_classes([IsAuthenticated])
+@api_view(['POST', 'PATCH', 'GET'])
+def contactUs(request):
     """
     :param request:
     :return:
