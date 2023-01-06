@@ -61,7 +61,7 @@ class CustomerProfilePostSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
-class ConstactUsSerializer(serializers.ModelSerializer):
+class ContactUsSerializer(serializers.ModelSerializer):
     class Meta:
         model = ContactUs
         fields = '__all__'
