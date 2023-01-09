@@ -12,7 +12,6 @@ class ShippingAddressSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
-
 class ShippingAddressReadSerializer(serializers.ModelSerializer):
     cutomer = CustomerProfileSerializer(read_only=True)
 
@@ -29,13 +28,13 @@ class WishlistSerializer(serializers.ModelSerializer):
 
 
 class WishlistReadSerializer(serializers.ModelSerializer):
-    # product = ProductSerializer(required=False, read_only=True)
-    # customer = CustomerProfileSerializer(required=False, read_only=True)
+    product = ProductSerializer(required=False, read_only=True)
+    customer = CustomerProfileSerializer(required=False, read_only=True)
 
     class Meta:
         model = Wishlist
         fields = '__all__'
-        depth = 1
+        # depth = 3
 
 
 class CouponSerializer(serializers.ModelSerializer):
@@ -52,7 +51,8 @@ class CartItemSerializer(serializers.ModelSerializer):
 
 
 class CartItemReadSerializer(serializers.ModelSerializer):
-    product = ProductSerializer(read_only=True,)
+    product = ProductSerializer(read_only=True, )
+
     # customer = CustomerProfileSerializer(read_only=True,)
 
     class Meta:
@@ -80,6 +80,7 @@ class OrderItemReadSerializer(serializers.ModelSerializer):
         model = OrderItem
         fields = '__all__'
         depth = 1
+
 
 class OrderSerializer(serializers.ModelSerializer):
     class Meta:

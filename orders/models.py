@@ -32,6 +32,7 @@ class ShippingAddress(models.Model):
     def __str__(self):
         return self.customer.user.username
 
+
 class CartItem(models.Model):
     customer = models.ForeignKey(CustomerProfile, on_delete=models.CASCADE, null=True)
     product = models.ForeignKey(Product, on_delete=models.CASCADE, null=True)
@@ -57,16 +58,17 @@ class OrderItem(models.Model):
     # def __str__(self):
     #     return self.product.name
 
-class Order(models.Model):
-    OrderPlaced ="Order Placed"
-    Processing ="Processing"
-    Shipped ="Shipped"
-    Delivered ="Delivered"
 
-    ORDER_STATUS = ((OrderPlaced ,"Order Placed"),
-                    (Processing ,"Processing"),
-                    (Shipped ,"Shipped"),
-                    (Delivered ,"Delivered"))
+class Order(models.Model):
+    OrderPlaced = "Order Placed"
+    Processing = "Processing"
+    Shipped = "Shipped"
+    Delivered = "Delivered"
+
+    ORDER_STATUS = ((OrderPlaced, "Order Placed"),
+                    (Processing, "Processing"),
+                    (Shipped, "Shipped"),
+                    (Delivered, "Delivered"))
 
     customer = models.ForeignKey(CustomerProfile, on_delete=models.CASCADE)
     order_reference = models.BigIntegerField(blank=True, null=True, unique=True)

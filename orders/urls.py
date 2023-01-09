@@ -10,7 +10,7 @@ urlpatterns = [
     path('wishlist/', create_wishlist, name='wishlist'),
     path('wishlist/<str:pk>', operate_wishlist, name='wishlist'),
 
-    path('address/', create_address,  name='address'),
+    path('address/', create_address, name='address'),
     path('orders/', create_order, name='orders'),
     path('orderitem/<str:pk>', create_order_item, name='orderItem'),
 
@@ -18,7 +18,6 @@ urlpatterns = [
     path('orders/myorder/', get_my_orders, name='get_my_orders'),
 
     path('post-review/', post_review_product, name="reviews"),
-
 
     path('orders/<str:pk>/', get_order_by_id, name='get_order_by_id'),
     path('orders/<str:pk>/deliver/', update_order_to_delivered, name='update_order_to_delivered'),

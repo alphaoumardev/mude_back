@@ -157,7 +157,7 @@ class CartItemView(RetrieveUpdateDestroyAPIView):
 
 @api_view(["GET", "POST"])
 @permission_classes([IsAuthenticated])
-def create_wishlist(request, ):
+def create_wishlist(request):
     """
     :param request:
     :return:
@@ -166,9 +166,8 @@ def create_wishlist(request, ):
 
     if request.method == 'GET':
         wishlist = Wishlist.objects.filter(customer=current_customer).order_by('-id')
-        wishlist_count = wishlist.count()
         serializer = WishlistReadSerializer(wishlist, many=True)
-        return Response({"result": serializer.data, "wishlist_count": wishlist_count, })
+        return Response(serializer.data)
 
     if request.method == "POST":
         try:
@@ -194,7 +193,7 @@ def create_wishlist(request, ):
             return Response({"message": '{}'.format(e)}, status=status.HTTP_204_NO_CONTENT)
 
 
-@api_view(["GET", "PUT", "DELETE"])
+@api_view(["GET", "PATCH", "DELETE"])
 @permission_classes([IsAuthenticated])
 def operate_wishlist(request, pk):
     """
@@ -211,10 +210,10 @@ def operate_wishlist(request, pk):
 
         return Response(serializer.data)
 
-    if request.method == 'PUT':
+    if request.method == 'PATCH':
         try:
             wishlist_item = Wishlist.objects.get(id=pk)
-            serializer = WishlistSerializer(instance=wishlist_item, data=request.data, )
+            serializer = WishlistSerializer(instance=wishlist_item, data=request.data)
             if serializer.is_valid():
                 serializer.save()
             return Response(serializer.data)
