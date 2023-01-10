@@ -13,7 +13,7 @@ def new_feed_created(sender, instance, created, **kwargs):
             from_profile=instance.profiles,
             notification_type='new_post',
             new_post=instance,
-            content=f"{instance.profiles.user.username} has posted an new Article"
+            content="{} has posted an new Article".format(instance.profiles.user.username)
         )
 
 
@@ -27,9 +27,8 @@ def new_comment_created(sender, instance, created, **kwargs):
             from_profile=instance.profiles,
             notification_type='new_post',
             new_post=instance,
-            content=f"{instance.profiles.user.username} has posted an new Article"
+            content="{} has posted an new Article".format(instance.profiles.user.username)
         )
-
 
 # post_save.connect(new_feed_created, sender=Feed)
 #
