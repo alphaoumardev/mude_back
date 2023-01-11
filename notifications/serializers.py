@@ -8,6 +8,7 @@ class NotificationSerializer(serializers.ModelSerializer):
     class Meta:
         model = Notifications
         fields = '__all__'
+        depth = 1
 
     # @staticmethod
     # def get_from_profile(obj):
