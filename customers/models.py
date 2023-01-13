@@ -14,6 +14,7 @@ class CustomerProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, null=True)
     contact = models.CharField(blank=True, max_length=11, null=True, unique=True)
     gender = models.CharField(max_length=10, null=True, choices=SEX)
+    nickname = models.CharField(max_length=30, blank=True)
     avatar = models.ImageField(upload_to="mudi", null=True, blank=True,
                                default="https://res.cloudinary.com/diallo/image/upload/v1647154137/8_fncc3c.jpg")
 
