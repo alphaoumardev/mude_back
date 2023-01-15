@@ -102,7 +102,7 @@ def get_customer_profile(request):
     :return:
     """
     if request.method == "GET":
-        profile = CustomerProfile.objects.get(user_id=request.user.id)
+        profile = CustomerProfile.objects.get(user=request.user)
         serializer = CustomerProfileSerializer(profile, many=False)
         return Response(serializer.data)
 
@@ -114,8 +114,7 @@ def get_customer_profile(request):
         return Response(serializer.errors)
 
     if request.method == "PATCH":
-        user = request.user.id
-        customer = CustomerProfile.objects.get(id=user)
+        customer = CustomerProfile.objects.get(user=request.user)
         seriliazer = CustomerProfileSerializer(instance=customer, data=request.data)
         if seriliazer.is_valid():
             seriliazer.save()
@@ -143,7 +142,7 @@ def contact_us(request):
 
     if request.method == "PATCH":
         user = request.user.id
-        customer = CustomerProfile.objects.get(id=user)
+        customer = CustomerProfile.objects.get(user_id=user)
         seriliazer = ContactUsSerializer(instance=customer, data=request.data)
         if seriliazer.is_valid():
             seriliazer.save()
