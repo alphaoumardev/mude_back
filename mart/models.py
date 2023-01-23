@@ -176,13 +176,13 @@ class Reviews(models.Model):
     def __str__(self):
         return self.comment
 
-# class FuturedImages(models.Model):
-#     product = models.ForeignKey(Product, on_delete=models.CASCADE, null=True)
-#     image_url = models.ImageField(upload_to="mudi", blank=True, null=True)
-#     color_name = models.ForeignKey("ColorsOption", on_delete=models.CASCADE, blank=True, null=True)
-#
-#     def __str__(self):
-#         return self.image_url.url
-#
-#     class Meta:
-#         verbose_name_plural = 'Detail Images'
+class FuturedImages(models.Model):
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, null=True)
+    image_url = models.ImageField(upload_to="mudi", blank=True, null=True)
+    color_name = models.ForeignKey("ColorsOption", on_delete=models.CASCADE, blank=True, null=True)
+
+    def __str__(self):
+        return self.image_url.url
+
+    class Meta:
+        verbose_name_plural = 'Detail Images'
