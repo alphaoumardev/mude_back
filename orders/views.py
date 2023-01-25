@@ -602,32 +602,32 @@ def post_review_product(request):
 
 #TODO:the following
 
-class OrderView(APIView):
-    permission_classes = [IsAuthenticated]
-
-    def post(self, request, pk, *args, **kwargs):
-        user = request.user
-        address = ShippingAddress.objects.filter(user=user, primary=True).first()
-        product = get_object_or_404(Product, pk=pk)
-        if product.stock == 0:
-            return Response("This product is out of stock")
-        try:
-            order_reference = request.data.get("order_reference", '')
-            quantity = request.data.get("quantity", 1)
-
-            total = quantity * product.price
-            order = Order().create_order(user, order_reference, status, address, checked_out=True,
-                                         isPaid=False, isDelivered=False,
-                                         paid_at=datetime.datetime.now(),
-                                         delivered_at=datetime.datetime.now(),
-                                         ordered_at=datetime.datetime.now(),
-                                         refund_requested=False,
-                                         isReceived=False,
-                                         isRefunded=False, )
-            order_item = OrderItem().create_order_item(order, product, quantity, total)
-            # serializer = OrderItemReadSerializer(order_item, )
-
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-
-        except Exception as e:
-            return Response("An error occur when creating the order", e)
+# class OrderView(APIView):
+#     permission_classes = [IsAuthenticated]
+#
+#     def post(self, request, pk, *args, **kwargs):
+#         user = request.user
+#         address = ShippingAddress.objects.filter(user=user, primary=True).first()
+#         product = get_object_or_404(Product, pk=pk)
+#         if product.stock == 0:
+#             return Response("This product is out of stock")
+#         try:
+#             order_reference = request.data.get("order_reference", '')
+#             quantity = request.data.get("quantity", 1)
+#
+#             total = quantity * product.price
+#             order = Order().create_order(user, order_reference, status, address, checked_out=True,
+#                                          isPaid=False, isDelivered=False,
+#                                          paid_at=datetime.datetime.now(),
+#                                          delivered_at=datetime.datetime.now(),
+#                                          ordered_at=datetime.datetime.now(),
+#                                          refund_requested=False,
+#                                          isReceived=False,
+#                                          isRefunded=False, )
+#             order_item = OrderItem().create_order_item(order, product, quantity, total)
+#             # serializer = OrderItemReadSerializer(order_item, )
+#
+#             return Response(serializer.data, status=status.HTTP_201_CREATED)
+#
+#         except Exception as e:
+#             return Response("An error occur when creating the order", e)
