@@ -14,7 +14,7 @@ urlpatterns = [
     path('orders/', create_order, name='orders'),
     path('orderitem/<str:pk>', create_order_item, name='orderItem'),
 
-    path('orders/', get_orders, name='get_orders'),
+    path('all-orders/', AllOrders.as_view({"get": "list"}), name='get_orders'),
     path('orders/myorder/', get_my_orders, name='get_my_orders'),
 
     path('post-review/', post_review_product, name="reviews"),

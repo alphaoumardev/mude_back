@@ -52,7 +52,7 @@ class CustomerProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = CustomerProfile
         fields = '__all__'
-        # depth = 1
+        depth = 1
 
 
 class CustomerProfilePostSerializer(serializers.ModelSerializer):

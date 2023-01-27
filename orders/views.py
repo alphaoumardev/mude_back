@@ -1,11 +1,13 @@
+from rest_framework.pagination import PageNumberPagination
+
 from mart.serializers import ReviewSerializer
 from orders.models import *
 from datetime import datetime
-from rest_framework import status
+from rest_framework import status, viewsets
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.exceptions import PermissionDenied
 from rest_framework.generics import get_object_or_404, ListCreateAPIView, RetrieveUpdateDestroyAPIView
-from rest_framework.permissions import IsAuthenticated, IsAdminUser
+from rest_framework.permissions import IsAuthenticated, IsAdminUser, AllowAny
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from orders.serializers import CartItemSerializer, OrderSerializer, CartItemUpdateSerializer, \
@@ -406,8 +408,30 @@ def get_my_orders(request):
         return Response({"message": '{}'.format(e)}, status=status.HTTP_204_NO_CONTENT)
 
 
+class MyPagination(PageNumberPagination):
+    page_size = 15  # default page size
+    page_size_query_param = 'size'  # ?page=xx&size=??
+
+    def get_paginated_response(self, data):
+        return Response({
+            'page_size': self.page_size,
+            'current_page_number': self.page.number,
+            'total_pages': self.page.paginator.num_pages,
+            'total_orders': self.page.paginator.count,
+            'next': self.get_next_link(),
+            'previous': self.get_previous_link(),
+            'results': data,
+        })
+
+
+class AllOrders(viewsets.ModelViewSet):
+    queryset = Order.objects.all()
+    serializer_class = OrderReadSerializer
+    pagination_class = MyPagination
+    permission_classes = [AllowAny]
+
 @api_view(['GET'])
-@permission_classes([IsAdminUser])  # just the admin can monitor the whole orders
+@permission_classes([AllowAny])  # just the admin can monitor the whole orders
 def get_orders(request):
     """
     :param request:
@@ -583,8 +607,6 @@ class CreateCartApiView(ListCreateAPIView):
         cart.total = total
         cart.save()
         return Response(serializer.data, status=status.HTTP_201_CREATED)
-
-
 
 
 @api_view(['POST'])
