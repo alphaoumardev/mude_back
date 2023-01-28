@@ -430,6 +430,7 @@ class AllOrders(viewsets.ModelViewSet):
     pagination_class = MyPagination
     permission_classes = [AllowAny]
 
+
 @api_view(['GET'])
 @permission_classes([AllowAny])  # just the admin can monitor the whole orders
 def get_orders(request):
