@@ -13,7 +13,6 @@ urlpatterns = [
     path('', include('notifications.urls')),
     path('', include('admin.urls')),
 
-
     # path('', TemplateView.as_view(template_name='index.html')),
 
 ]
