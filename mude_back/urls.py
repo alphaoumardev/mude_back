@@ -10,6 +10,9 @@ urlpatterns = [
     path('', include('orders.urls')),
     path('', include('customers.urls')),
     path('', include('notifications.urls')),
+    path('', include('notifications.urls')),
+    path('', include('admin.urls')),
+
 
     # path('', TemplateView.as_view(template_name='index.html')),
 

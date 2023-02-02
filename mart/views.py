@@ -15,7 +15,6 @@ from mart.serializers import ProductSerializer, ColorsOptionSerializer, TagSeria
 
 """To Jenny"""
 
-
 print('\n'.join
       ([''.join
         ([('Jenny'[(x - y) % 5]

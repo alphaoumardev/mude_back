@@ -114,9 +114,9 @@ class Product(models.Model):
     category = TreeForeignKey(Category, on_delete=models.CASCADE, related_name="articles", null=True, blank=True)
 
     # category = models.ForeignKey(Categories, on_delete=models.CASCADE, related_name="article")
-    name = models.CharField(max_length=50, null=False)
+    name = models.CharField(max_length=50, null=True)
     sku = models.BigIntegerField(blank=True, null=True)
-    description = models.TextField(blank=False)
+    description = models.TextField(blank=True)
     price = models.DecimalField(default=20, decimal_places=2, max_digits=6)
 
     status = models.BooleanField(default=True, null=True, )
@@ -153,8 +153,8 @@ class Images(models.Model):
     class Meta:
         verbose_name_plural = "Images"
 
-    def __str__(self):
-        return self.product.name
+    # def __str__(self):
+    #     return self.product.name
 
     def image_preview(self):
         if self.image:
