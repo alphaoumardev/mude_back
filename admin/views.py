@@ -2,10 +2,11 @@ from django.shortcuts import render
 from rest_framework import status
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.exceptions import ParseError
+from rest_framework.generics import get_object_or_404
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 
-from mart.models import Images
+from mart.models import Images, Product
 from mart.serializers import ProductSerializer
 
 
@@ -20,9 +21,10 @@ def post_new_product(request):
             if seriliazer.is_valid():
                 # images = ImageSerializer(data=request.data['images'])
                 seriliazer.save()
+                product = Product.objects.get(id=request.data['product'])
                 # try:
                 # images = request.data['image']
-                # Images.objects.create(product=seriliazer, image=images)
+                Images.objects.create(product=seriliazer, image=request.data['image'])
                 # except KeyError:
                 #     raise ParseError('Request has no resource images attached')
                 return Response(seriliazer.data)
