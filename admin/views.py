@@ -4,7 +4,7 @@ from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 
 from mart.models import Images, Product
-from mart.serializers import ProductSerializer
+from mart.serializers import ProductSerializer, ImageSerializer
 
 
 # Create your views here.
@@ -28,3 +28,18 @@ def post_new_product(request):
             return Response(seriliazer.errors)
         except Exception as e:
             return Response('{} Order does not exist'.format(e), status=status.HTTP_400_BAD_REQUEST)
+
+from rest_framework import generics
+
+class ImageCreateView(generics.CreateAPIView):
+    serializer_class = ImageSerializer
+
+    def post(self, request, *args, **kwargs):
+        product_id = request.data.get('product')
+        product = Product.objects.get(id=product_id)
+        images = request.FILES.getlist('images')
+
+        for image in images:
+            Images.objects.create(product=product, image=image)
+
+        return Response(status=status.HTTP_201_CREATED)
