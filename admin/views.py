@@ -18,7 +18,7 @@ def post_new_product(request):
             if seriliazer.is_valid():
                 # images = ImageSerializer(data=request.data['images'])
                 seriliazer.save()
-                product = Product.objects.get(id=request.data['product'])
+                Product.objects.get(id=request.data['product'])
                 # try:
                 # images = request.data['image']
                 Images.objects.create(product=seriliazer, image=request.data['image'])
@@ -29,7 +29,9 @@ def post_new_product(request):
         except Exception as e:
             return Response('{} Order does not exist'.format(e), status=status.HTTP_400_BAD_REQUEST)
 
+
 from rest_framework import generics
+
 
 class ImageCreateView(generics.CreateAPIView):
     serializer_class = ImageSerializer

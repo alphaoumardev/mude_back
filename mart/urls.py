@@ -1,12 +1,9 @@
 from django.urls import path
 
-from admin.views import post_new_product
 from .product_filter import *
 from .views import *
 
 urlpatterns = [
-
-    # path('add-product/', post_new_product, name='post_new_product'),
 
     path('mptt-categories/', get_mptt_categories, name='mptts'),
     path('filter-products-by-category/', FilterProductByCategory.as_view({"get": "list"}), name="filter-products"),

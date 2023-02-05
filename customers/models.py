@@ -1,5 +1,6 @@
 from django.contrib.auth.models import User
 from django.core.mail import send_mail
+from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.db import models
 from django.urls import reverse
@@ -22,13 +23,12 @@ class CustomerProfile(models.Model):
         return self.user.username
 
 
-# @receiver(post_save, sender=CustomerProfile)
-# def user_profile_receiver(sender, instance=None, created=False, *args, **kwargs):
-#     if created:
-#         CustomerProfile.objects.create(user=instance)
+@receiver(post_save, sender=CustomerProfile)
+def user_profile_receiver(sender, instance=None, created=False, *args, **kwargs):
+    if created:
+        CustomerProfile.objects.create(user=instance)
 
-
-# post_save.connect(user_profile_receiver, sender=CustomerProfile)
+post_save.connect(user_profile_receiver, sender=CustomerProfile)
 
 
 @receiver(reset_password_token_created)
