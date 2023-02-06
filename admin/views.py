@@ -1,4 +1,4 @@
-from rest_framework import status
+from rest_framework import status, generics
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
@@ -7,8 +7,6 @@ from mart.models import Images, Product
 from mart.serializers import ProductSerializer, ImageSerializer
 
 
-# Create your views here.
-# Here are just for the products
 @api_view(['POST'])
 @permission_classes([AllowAny])
 def post_new_product(request):
@@ -28,9 +26,6 @@ def post_new_product(request):
             return Response(seriliazer.errors)
         except Exception as e:
             return Response('{} Order does not exist'.format(e), status=status.HTTP_400_BAD_REQUEST)
-
-
-from rest_framework import generics
 
 
 class ImageCreateView(generics.CreateAPIView):
