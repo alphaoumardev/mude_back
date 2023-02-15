@@ -120,30 +120,30 @@ def get_customer_profile(request):
             seriliazer.save()
         return Response(seriliazer.data)
 
-
-@permission_classes([IsAuthenticated])
-@api_view(['POST', 'PATCH', 'GET'])
-def contact_us(request):
-    """
-    :param request:
-    :return:
-    """
-    if request.method == "GET":
-        messages = ContactUs.objects.all()
-        serializer = ContactUsSerializer(messages, many=True)
-        return Response(serializer.data)
-
-    if request.method == "POST":
-        serializer = ContactUsSerializer(data=request.data, many=False)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data)
-        return Response(serializer.errors)
-
-    if request.method == "PATCH":
-        user = request.user.id
-        customer = CustomerProfile.objects.get(user_id=user)
-        seriliazer = ContactUsSerializer(instance=customer, data=request.data)
-        if seriliazer.is_valid():
-            seriliazer.save()
-        return Response(seriliazer.data)
+#
+# @permission_classes([IsAuthenticated])
+# @api_view(['POST', 'PATCH', 'GET'])
+# def contact_us(request):
+#     """
+#     :param request:
+#     :return:
+#     """
+#     if request.method == "GET":
+#         messages = ContactUs.objects.all()
+#         serializer = ContactUsSerializer(messages, many=True)
+#         return Response(serializer.data)
+#
+#     if request.method == "POST":
+#         serializer = ContactUsSerializer(data=request.data, many=False)
+#         if serializer.is_valid():
+#             serializer.save()
+#             return Response(serializer.data)
+#         return Response(serializer.errors)
+#
+#     if request.method == "PATCH":
+#         user = request.user.id
+#         customer = CustomerProfile.objects.get(user_id=user)
+#         seriliazer = ContactUsSerializer(instance=customer, data=request.data)
+#         if seriliazer.is_valid():
+#             seriliazer.save()
+#         return Response(seriliazer.data)
