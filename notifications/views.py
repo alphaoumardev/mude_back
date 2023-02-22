@@ -26,6 +26,7 @@ def get_notifications(request, ):
 @permission_classes([IsAuthenticated])
 def delete_notification(request, pk):
     pass
+
     current_profile = CustomerProfile.objects.get(user=request.user)
     notification = Notifications.objects.get(to_profile=current_profile, id=pk)
     if request.method == 'DELETE':

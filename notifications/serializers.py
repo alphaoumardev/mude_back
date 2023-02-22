@@ -10,6 +10,6 @@ class NotificationSerializer(serializers.ModelSerializer):
         fields = '__all__'
         depth = 1
 
-    @staticmethod
-    def get_from_profile(obj):
-        return CommentatorSerializer(obj.from_profile, many=False).data
+    # @staticmethod
+    # def get_from_profile(obj):
+    #     return CommentatorSerializer(obj.from_profile, many=False).data

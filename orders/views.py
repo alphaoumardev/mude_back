@@ -648,7 +648,7 @@ class OrderView(APIView):
                                          isReceived=False,
                                          isRefunded=False, )
             order_item = OrderItem().create_order_item(order, product, quantity, total)
-            # serializer = OrderItemReadSerializer(order_item, )
+            serializer = OrderItemReadSerializer(order_item, )
 
             return Response(serializer.data, status=status.HTTP_201_CREATED)
 

@@ -30,6 +30,6 @@ def new_comment_created(sender, instance, created, **kwargs):
             content="{} has posted an new Article".format(instance.profiles.user.username)
         )
 
-# post_save.connect(new_feed_created, sender=Feed)
-#
-# post_save.connect(new_feed_created, sender=Feed)
+post_save.connect(new_feed_created, sender=Feed)
+
+post_save.connect(new_feed_created, sender=Feed)

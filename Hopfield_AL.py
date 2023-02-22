@@ -93,7 +93,7 @@ def update_asynch(weight, vector, theta=0.5, times=100):
         times_.append(i)
         energy_.append(energy(weight, vector))
 
-    return (vector, times_, energy_)
+    return vector, times_, energy_
 
 
 # 为了更好地看到迭代对系统的影响，我们按照定义计算每一次迭代后的系统能量，最后画出E的图像，便可验证。
@@ -102,9 +102,9 @@ def energy(weight, x, bias=0):
     # weight: m*m weight matrix
     # x: 1*m data vector
     # bias: outer field
-    energy = -x.dot(weight).dot(x.T) + sum(bias * x)
+    current_energy = -x.dot(weight).dot(x.T) + sum(bias * x)
     # E is a scalar
-    return energy
+    return current_energy
 
 
 # 调用前文定义的函数把主函数表达清楚。可以调整size和threshod获得更好的输入效果为了增加泛化能力，正则化之后打开训练图片，并且通过该程序获取权重矩阵。
@@ -131,12 +131,12 @@ for path in train_paths:
     plt.show()
     if flag == 0:
         w_ = create_W_single_pattern(vector_train)
-        flag = flag + 1
+        flag += 1
     else:
-        w_ = w_ + create_W_single_pattern(vector_train)
-        flag = flag + 1
+        w_ += create_W_single_pattern(vector_train)
+        flag += 1
 
-w_ = w_ / flag
+w_ /= flag
 print("weight matrix is prepared!!!!!")
 test_paths = []
 # test_path = "/Users/admin/Desktop/test_pics/"
@@ -146,14 +146,14 @@ for i in os.listdir(test_path):
         test_paths.append(test_path + i)
 num = 0
 for path in test_paths:
-    num = num + 1
+    num += 1
     matrix_test = readImg2array(path, size=size_global, threshold=threshold_global)
     vector_test = mat2vec(matrix_test)
     plt.subplot(221)
     plt.imshow(array2img(matrix_test))
     plt.title("test picture" + str(num))
     oshape = matrix_test.shape
-    aa = update_asynch(weight=w_, vector=vector_test, theta=0.5, times=8000)
+    aa = update_asynch(weight=w_, vector=vector_test, times=8000)
     vector_test_update = aa[0]
     matrix_test_update = vector_test_update.reshape(oshape)
     # matrix_test_update.shape
@@ -162,7 +162,7 @@ for path in test_paths:
     plt.imshow(array2img(matrix_test_update))
     plt.title("recall" + str(num))
 
-    # plt.show()
+    #plt.show()
     plt.subplot(212)
     plt.plot(aa[1], aa[2])
     plt.ylabel("energy")
