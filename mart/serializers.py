@@ -96,14 +96,14 @@ class ProductSerializer(serializers.ModelSerializer):
     # def get_images(obj):
     #     return ImageSerializer(obj.image, many=True).data
     """
-    # category = CategorySerializer(many=False, read_only=True,) # source='category_set'
-    # tag = TagSerializer(read_only=True, many=True, required=False)
-    # brand = BrandSerializer(read_only=True, required=False, many=False)
-    # color = ColorsOptionSerializer(read_only=True, required=False, many=True)
-    # size = SizeSerialiser(read_only=True, required=False, many=True)
-    # lengths = LengthSerializer(read_only=True, required=False, many=True)
-    # materials = MaterialSerializer(read_only=True, required=False, many=True)
-    # occasion = OccasionSerializer(read_only=True, required=False, many=True)
+    category = CategorySerializer(many=False, read_only=True,) # source='category_set'
+    tag = TagSerializer(read_only=True, many=True, required=False)
+    brand = BrandSerializer(read_only=True, required=False, many=False)
+    color = ColorsOptionSerializer(read_only=True, required=False, many=True)
+    size = SizeSerialiser(read_only=True, required=False, many=True)
+    lengths = LengthSerializer(read_only=True, required=False, many=True)
+    materials = MaterialSerializer(read_only=True, required=False, many=True)
+    occasion = OccasionSerializer(read_only=True, required=False, many=True)
 
 
 class ReviewSerializer(serializers.ModelSerializer):
