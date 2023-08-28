@@ -72,6 +72,7 @@ def mat2vec(x):
     return tmp1
 
 
+
 # 创建权重矩阵根据权重矩阵的对称特性，可以很好地减少计算量。
 # 请填写代码
 
@@ -105,6 +106,7 @@ def energy(weight, x, bias=0):
     current_energy = -x.dot(weight).dot(x.T) + sum(bias * x)
     # E is a scalar
     return current_energy
+
 
 
 # 调用前文定义的函数把主函数表达清楚。可以调整size和threshod获得更好的输入效果为了增加泛化能力，正则化之后打开训练图片，并且通过该程序获取权重矩阵。
